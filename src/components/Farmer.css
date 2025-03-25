@@ -1,0 +1,81 @@
+.farmer-page html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #043F23;
+}
+
+.farmer-page .farmer-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.farmer-page .farmer-box {
+    background: white;
+    padding: 3rem;
+    border-radius: 15px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 350px;
+    position: relative;
+}
+
+.farmer-page .farmer-box h2 {
+    margin-bottom: 1rem;
+    color: #497A44;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.farmer-page .input-field {
+    width: 300px;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.farmer-page .farmer-button {
+    width: 275px;
+    padding: 12px;
+    background-color: #8D6E63;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.farmer-page .farmer-button:hover {
+    background-color: #365F34;
+}
+
+  .farmer-page .farmer-title {
+    top: 30%;
+    font-size: 50px;
+    font-weight: bold;
+    color: #FBC02D;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    margin: 0;
+}
+.farmer-page p{
+    top: 30%;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+.farmer-page .small{
+    top: 30%;
+    font-weight: bold;
+    color: #FBC02D;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+a{
+    color: #365F34;
+}
