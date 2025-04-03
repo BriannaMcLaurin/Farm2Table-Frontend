@@ -3,14 +3,13 @@ import { auth, db } from "../Firebase/Firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import "./SignUp.css";
+import "./Signup.css";
 
 const SignUp = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState("buyer"); // Default role as "buyer"
     const navigate = useNavigate();
 
     const handleSignUp = async (e) => {
@@ -24,12 +23,14 @@ const SignUp = () => {
                 firstName,
                 lastName,
                 email,
+                createdAt: new Date().toISOString()
             });
 
-            alert("Buyer account created successfully!");
+            alert(`account created successfully!`);
             navigate("/"); // Redirect to login page
         } catch (error) {
             console.error("Error signing up:", error.message);
+            alert(error.message);
         }
     };
 
@@ -39,16 +40,16 @@ const SignUp = () => {
                 <h1 className="signup-title">Welcome, Create an Account!</h1>
                 <p>Connecting Farmers to Markets – Fair Prices, Zero Waste.</p>
                 <div className="signup-box">
-                <form onSubmit={handleSignUp}>
-                    <input type="text" className="input-field" placeholder="First Name" onChange={(e) => setFirstName(e.target.value)} required />
-                    <input type="text" className="input-field" placeholder="Last Name" onChange={(e) => setLastName(e.target.value)} required />
-                    <input type="email" className="input-field" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
-                    <input type="password" className="input-field" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
-                    <button type="submit" className="signup-button">Sign Up</button>
-                </form>
-                <p className="small">Already have an account? <a href="/">Sign In</a></p>
+                    <form onSubmit={handleSignUp}>
+                        <input type="text" className="input-field" placeholder="First Name" onChange={(e) => setFirstName(e.target.value)} required />
+                        <input type="text" className="input-field" placeholder="Last Name" onChange={(e) => setLastName(e.target.value)} required />
+                        <input type="email" className="input-field" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
+                        <input type="password" className="input-field" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
+                        <button type="submit" className="signup-button">Sign Up</button>
+                    </form>
+                    <p className="small">Already have an account? <a href="/">Sign In</a></p>
+                </div>
             </div>
-        </div>
         </div>
     );
 };
