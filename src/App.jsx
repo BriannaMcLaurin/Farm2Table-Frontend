@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import MarketInsights from './pages/MarketInsights';
 import Pricing from './pages/Pricing';
 import Orders from './pages/Orders';
+import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -36,6 +37,7 @@ function AppRoutes() {
         <Route path="/market-insights" element={<MarketInsights />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
