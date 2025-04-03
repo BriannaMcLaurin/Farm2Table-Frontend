@@ -1,32 +1,30 @@
-#f2t-container {
+.farm-dashboard {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  max-width: 1400px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   background-color: #f8f9fa;
   min-height: 100vh;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
-                    url('https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
+  box-sizing: border-box;
 }
 
 .dashboard-header {
   text-align: center;
-  margin: 2rem auto 2rem 20rem;
-  padding: 1rem;
+  margin: 1rem auto;
+  padding: 0.75rem;
   background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 800px;
+  max-width: 100%;
   position: relative;
   z-index: 1000;
+  box-sizing: border-box;
 }
 
 .dashboard-header h1 {
@@ -43,39 +41,40 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 2rem;
-  margin-top: 2rem;
-  margin-bottom: 6rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
   width: 100%;
-  max-width: 1200px;
   position: relative;
-  padding: 0 2rem;
+  box-sizing: border-box;
 }
 
 .left-section {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   width: 100%;
-  max-width: 600px;
-  grid-column: 1;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .right-section {
   width: 100%;
-  max-width: 600px;
-  grid-column: 2;
-  margin-left: 10rem;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .pricing-card, .chart-card {
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: 8px;
+  padding: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   border: 1px solid #e2e8f0;
+  box-sizing: border-box;
 }
 
 .pricing-card h2, .chart-card h2 {
@@ -251,7 +250,7 @@
 }
 
 .product-selector {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -267,8 +266,8 @@
   border: 1px solid #e2e8f0;
   border-radius: 6px;
   background-color: white;
-  color: #2d3748;
   font-size: 1rem;
+  color: #2d3748;
   cursor: pointer;
 }
 
@@ -278,28 +277,51 @@
 
 .product-selector select:focus {
   outline: none;
-  border-color: #4F46E5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+@media (min-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  
+  .farm-dashboard {
+    padding: 1rem 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .farm-dashboard {
+    padding: 1rem 3rem;
+  }
+  
+  .dashboard-grid {
+    gap: 3rem;
+  }
 }
 
 @media (max-width: 1024px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 1rem;
   }
   
   .left-section, .right-section {
-    grid-column: 1;
-    margin-left: 0;
+    max-width: 100%;
+    margin: 0;
   }
   
   .action-section {
-    position: relative;
-    bottom: auto;
+    position: static;
+    transform: none;
     margin-top: 2rem;
   }
   
   .dashboard-header {
-    margin-left: 0;
+    margin: 2rem auto;
   }
 }
 
