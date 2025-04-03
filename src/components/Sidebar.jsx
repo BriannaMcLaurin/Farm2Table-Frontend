@@ -7,7 +7,7 @@ const Sidebar = ({ isCollapsed }) => {
     { icon: '📊', label: 'Dashboard', path: '/' },
     { icon: '🌾', label: 'Market Insights', path: '/market-insights' },
     { icon: '💰', label: 'Pricing', path: '/pricing' },
-    { icon: '📦', label: 'Orders', path: '/orders' },
+    { icon: '📦', label: 'Orders', path: '/order-table' },
     { icon: '👥', label: 'Profile', path: '/profile' },
     { icon: '⚙️', label: 'Settings', path: '/settings' },
   ];
