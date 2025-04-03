@@ -9,7 +9,8 @@
   display: flex;
   flex-direction: column;
   padding: 1rem 0;
-  transition: width 0.3s ease;
+  transition: all 0.3s ease;
+  z-index: 1000;
 }
 
 .sidebar.collapsed {
@@ -19,12 +20,14 @@
 .sidebar-nav {
   flex: 1;
   overflow-y: auto;
+  width: 100%;
 }
 
 .sidebar-nav ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
 }
 
 .nav-item {
@@ -33,8 +36,9 @@
   padding: 0.75rem 1.5rem;
   color: #2c3e50;
   text-decoration: none;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   white-space: nowrap;
+  width: 100%;
 }
 
 .nav-item:hover {
@@ -55,21 +59,26 @@
 
 .label {
   font-weight: 500;
+  transition: opacity 0.3s ease;
 }
 
 .sidebar.collapsed .label {
-  display: none;
+  opacity: 0;
+  width: 0;
+  margin-right: 0;
 }
 
 .sidebar-footer {
   padding: 1rem 1.5rem;
   border-top: 1px solid #e0e0e0;
+  width: 100%;
 }
 
 .user-info {
   display: flex;
   align-items: center;
   gap: 1rem;
+  width: 100%;
 }
 
 .avatar {
@@ -82,6 +91,7 @@
 .user-details {
   display: flex;
   flex-direction: column;
+  transition: opacity 0.3s ease;
 }
 
 .username {
@@ -95,7 +105,8 @@
 }
 
 .sidebar.collapsed .user-details {
-  display: none;
+  opacity: 0;
+  width: 0;
 }
 
 @media (max-width: 768px) {
@@ -104,10 +115,13 @@
   }
 
   .label {
-    display: none;
+    opacity: 0;
+    width: 0;
+    margin-right: 0;
   }
 
   .user-details {
-    display: none;
+    opacity: 0;
+    width: 0;
   }
 } 

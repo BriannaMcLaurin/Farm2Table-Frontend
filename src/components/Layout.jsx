@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
         isSidebarCollapsed={isSidebarCollapsed}
       />
       <Sidebar isCollapsed={isSidebarCollapsed} />
-      <main className={`main-content ${isSidebarCollapsed ? 'expanded' : ''}`}>
+      <main className={`main-content ${!isSidebarCollapsed ? 'expanded' : ''}`}>
         {children}
       </main>
     </div>

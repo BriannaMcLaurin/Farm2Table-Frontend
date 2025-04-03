@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Login.css';
+import { useAuth } from '../contexts/AuthContext';
+import '../styles/auth.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login, error, setError } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -21,15 +23,14 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+    setLoading(true);
     try {
-      // TODO: Implement actual login logic here
-      console.log('Login attempt with:', formData);
-      // For now, just navigate to dashboard on successful login
+      await login(formData.email, formData.password);
       navigate('/dashboard');
     } catch (err) {
-      setError('Invalid email or password');
+      setError(err.message);
     }
+    setLoading(false);
   };
 
   return (
@@ -50,7 +51,6 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="Enter your email"
             />
           </div>
           
@@ -63,7 +63,6 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              placeholder="Enter your password"
             />
           </div>
           
@@ -77,13 +76,17 @@ const Login = () => {
             </Link>
           </div>
           
-          <button type="submit" className="auth-button">
-            Sign In
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
         
         <div className="auth-footer">
-          <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+          Don't have an account? <Link to="/signup">Sign up</Link>
         </div>
       </div>
     </div>

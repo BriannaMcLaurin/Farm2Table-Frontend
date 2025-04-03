@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './SignUp.css';
+import { useAuth } from '../contexts/AuthContext';
+import '../styles/auth.css';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { signup, error, setError } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,20 +24,19 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+    
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
+      return setError('Passwords do not match');
     }
-
+    
+    setLoading(true);
     try {
-      // TODO: Implement actual signup logic here
-      console.log('Signup attempt with:', formData);
-      // For now, just navigate to dashboard on successful signup
+      await signup(formData.email, formData.password);
       navigate('/dashboard');
     } catch (err) {
-      setError('Error creating account. Please try again.');
+      setError(err.message);
     }
+    setLoading(false);
   };
 
   return (
@@ -49,34 +48,6 @@ const SignUp = () => {
         {error && <div className="error-message">{error}</div>}
         
         <form onSubmit={handleSubmit}>
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="firstName">First Name</label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                placeholder="Enter your first name"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name</label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-                placeholder="Enter your last name"
-              />
-            </div>
-          </div>
-          
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -86,43 +57,46 @@ const SignUp = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="Enter your email"
             />
           </div>
           
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Create a password"
-            />
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+            </div>
           </div>
           
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              placeholder="Confirm your password"
-            />
-          </div>
-          
-          <button type="submit" className="auth-button">
-            Create Account
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
         
         <div className="auth-footer">
-          <p>Already have an account? <Link to="/login">Sign in</Link></p>
+          Already have an account? <Link to="/login">Sign in</Link>
         </div>
       </div>
     </div>
