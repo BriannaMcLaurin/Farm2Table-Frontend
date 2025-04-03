@@ -1,24 +1,15 @@
-.pricing-page,
-.orders-page,
-.analytics-page,
 .settings-page {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.pricing-page h1,
-.orders-page h1,
-.analytics-page h1,
 .settings-page h1 {
   color: #2d3748;
   font-size: 2rem;
   margin-bottom: 1rem;
 }
 
-.pricing-page p,
-.orders-page p,
-.analytics-page p,
 .settings-page p {
   color: #718096;
   font-size: 1.1rem;

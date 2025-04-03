@@ -9,7 +9,6 @@ const Sidebar = ({ isCollapsed }) => {
     { icon: '💰', label: 'Pricing', path: '/pricing' },
     { icon: '📦', label: 'Orders', path: '/orders' },
     { icon: '👥', label: 'Profile', path: '/profile' },
-    { icon: '📈', label: 'Analytics', path: '/analytics' },
     { icon: '⚙️', label: 'Settings', path: '/settings' },
   ];
 
