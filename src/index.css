@@ -1,132 +1,43 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+  color: #2c3e50;
+  background-color: #ffffff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  background-color: #f9f9f9;
-  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
 }
 
-h2 {
-  margin-bottom: 20px;
-  color: #333;
+a {
+  color: #27ae60;
+  text-decoration: none;
 }
 
-.App {
-  text-align: center;
-  padding: 30px;
-  font-family: Arial, sans-serif;
-}
-
-table {
-  margin-top: 20px;
-  border-collapse: collapse;
-}
-
-th {
-  background-color: #f4f4f4;
+a:hover {
+  color: #219653;
 }
 
 button {
-  padding: 5px 10px;
-  margin: 5px;
-  cursor: pointer;
-}
-
-.filters {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.filters input, 
-.filters select,
-.filters .react-datepicker-wrapper {
-  padding: 8px;
-  border: 1px solid #ccc;
-}
-
-.order-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  box-shadow: 0 2px 6px rgb(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.order-table th, .order-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: center;
-}
-
-.order-table th {
-  background-color: #f4f4f4;
-}
-
-.status-tag {
-  padding: 6px 10px;
-  border-radius: 15px;
-  color: white;
-  font-weight: bold;
-}
-
-.status-tag.delivered { background-color: green; }
-.status-tag.pending { background-color: orange; }
-.status-tag.intransit { background-color: purple; }
-.status-tag.confirmed { background-color: blue; }
-.status-tag.canceled { background-color: red; }
-
-.pagination {
-  margin-top: 20px;
-}
-
-.pagination button {
-  margin: 0 5px;
-}
-
-button {
-  padding: 6px 10px;
-  border: 1px solid #007bff;
-  background-color: white;
-  color: #007bff;
-  border-radius: 6px;
-  margin: 4px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.add-order-btn {
-  margin-bottom: 20px;
-  background-color: #28a745;
   border: none;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
+  font-family: inherit;
   cursor: pointer;
 }
 
-.add-order-btn:hover {
-  background-color: #218838;
-}
-
-.modal {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+button:focus {
+  outline: none;
 }

@@ -1,0 +1,17 @@
+.pricing-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pricing-page h1 {
+  color: #2d3748;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.pricing-page p {
+  color: #718096;
+  font-size: 1.1rem;
+  line-height: 1.6;
+} 
