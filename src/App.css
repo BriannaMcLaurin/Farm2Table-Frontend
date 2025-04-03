@@ -6,6 +6,17 @@
   text-align: left;
 }
 
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
@@ -35,7 +46,11 @@
 }
 
 .card {
-  padding: 2em;
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
 }
 
 .read-the-docs {
@@ -57,13 +72,6 @@
   gap: 1.5rem;
 }
 
-.card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 .card h3 {
   color: #666;
   margin: 0 0 1rem 0;
@@ -75,4 +83,11 @@
   font-size: 2rem;
   font-weight: 600;
   margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1rem;
+  }
 }
