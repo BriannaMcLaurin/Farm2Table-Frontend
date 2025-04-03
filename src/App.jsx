@@ -6,8 +6,9 @@ import MarketInsights from './pages/MarketInsights';
 import Pricing from './pages/Pricing';
 import Orders from './pages/Orders';
 import Settings from './pages/Settings';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
+import Login from './components/Login';
+import SignUp from './components/Signup';
+import FarmerSignUp from './components/Farmer';
 import './App.css';
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/farmer-signup" element={<FarmerSignUp />} />
             <Route
               path="/"
               element={
