@@ -51,6 +51,17 @@ function OrderTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(orders.length / itemsPerPage);
 
+  const isSameDay = (date1, date2) => {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    return (
+      d1.getDate() === d2.getDate() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getFullYear() === d2.getFullYear()
+    );
+  };
+  
+
   // Filter logic
   const filteredOrders = orders
     .filter(order => {
@@ -62,7 +73,11 @@ function OrderTable() {
       }
       let matchesStatus = filterStatus === '' || order.status === filterStatus;
       let matchesDate = true;
-      if (selectedDate) matchesDate = order.date === formatDate(selectedDate);
+      if (selectedDate) {
+        const orderDate = new Date(order.date + ' 00:00'); 
+        const selected = new Date(selectedDate);
+        matchesDate = isSameDay(orderDate, selected);
+      }
       return matchesSearch && matchesStatus && matchesDate;
     })
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -74,7 +89,8 @@ function OrderTable() {
       const year = d.getFullYear().toString().slice(-2);
       return `${month}/${day}/${year}`; 
     };
-      
+
+ 
 
   const trackOrder = (orderId) => {
     axios.get(`http://localhost:8080/orders/track/${orderId}`)
