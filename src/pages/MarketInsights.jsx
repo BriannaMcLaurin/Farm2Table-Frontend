@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -12,6 +13,7 @@ import {
 } from 'chart.js';
 import './MarketInsights.css';
 
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -22,257 +24,287 @@ ChartJS.register(
   Legend
 );
 
-const API_BASE_URL = "http://localhost:8080/api/ai";
+const MarketInsights = () => {
+  const [selectedProduct, setSelectedProduct] = useState('');
+  const [comprehensiveData, setComprehensiveData] = useState(null);
+  const [recommendations, setRecommendations] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [chartData, setChartData] = useState(null);
 
-function MarketInsights() {
-  const [pricingData, setPricingData] = useState(null);
-  const [selectedProduct, setSelectedProduct] = useState('Corn'); // Default product
-  const [suggestedPrices, setSuggestedPrices] = useState([
-    { name: 'Corn', basePrice: 12, category: 'Grains' },
-    { name: 'Strawberries', basePrice: 8, category: 'Fruits' },
-    { name: 'Blueberries', basePrice: 7, category: 'Fruits' },
-    { name: 'Carrots', basePrice: 7, category: 'Vegetables' },
-  ]);
-  const [selectedCrops, setSelectedCrops] = useState([]);
-  const [isAutoEnabled, setIsAutoEnabled] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const [collapsedCategories, setCollapsedCategories] = useState({});
-
-  // Get unique products for the dropdown
-  const uniqueProducts = [...new Set(suggestedPrices.map(crop => crop.name))];
+  // Sample product list - in a real app, this would come from your backend
+  const products = [
+    'Organic Tomatoes',
+    'Fresh Lettuce',
+    'Carrots',
+    'Potatoes',
+    'Onions',
+    'Bell Peppers',
+    'Cucumbers',
+    'Spinach',
+    'Kale',
+    'Broccoli'
+  ];
 
   useEffect(() => {
-    fetchRealTimePricing();
-    generateSuggestedPrices();
-    showPriceTooltip();
-
-    const applyButton = document.getElementById("f2t-apply-btn");
-    applyButton?.addEventListener("click", applySuggestedPrices);
-
-    return () => {
-      if (applyButton) {
-        applyButton.removeEventListener("click", applySuggestedPrices);
-      }
-    };
-  }, [selectedProduct]); // Refetch when product changes
-
-  async function fetchRealTimePricing() {
-    try {
-      const requestData = {
-        historicalPrices: [12.0, 11.8, 12.2, 12.5, 12.1],
-        demand: [120, 150, 170, 140, 160],
-      };
-
-      const response = await fetch(`${API_BASE_URL}/price`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setPricingData({
-        price: data?.price ?? 12.2,
-        message: data?.message
-      });
-    } catch (error) {
-      console.error("Error fetching real-time pricing:", error);
-      setPricingData({
-        price: 12.2,
-        message: "Using default pricing data (Backend server not available)"
-      });
+    if (selectedProduct) {
+      fetchComprehensiveData();
+      fetchRecommendations();
     }
-  }
+  }, [selectedProduct]);
 
-  function generateSuggestedPrices() {
-    const crops = [
-      { name: "Strawberries", basePrice: 8, category: 'Fruits' },
-      { name: "Blueberries", basePrice: 7, category: 'Fruits' },
-      { name: "Cucumbers", basePrice: 6, category: 'Vegetables' },
-      { name: "Carrots", basePrice: 7, category: 'Vegetables' },
-      { name: "Corn", basePrice: 12, category: 'Grains' },
-      { name: "Whole Milk", basePrice: 4, category: 'Dairy' },
-      { name: "Apples", basePrice: 5, category: 'Fruits' },
-    ];
+  useEffect(() => {
+    if (comprehensiveData) {
+      generateChartData();
+    }
+  }, [comprehensiveData]);
 
-    setSuggestedPrices(crops);
-  }
-
-  function applySuggestedPrices() {
-    const selectedItems = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'));
-    selectedItems.forEach((item) => {
-      const cropName = item.value;
-      const cropPrice = parseFloat(item.dataset.price);
-      updateCropPrice(cropName, cropPrice);
-    });
-  }
-
-  async function updateCropPrice(cropName, price) {
-    console.log(`Updating ${cropName} to $${price.toFixed(2)} per lb...`);
-  }
-
-  const chartData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      {
-        label: "Market Price Trend",
-        data: [12, 11.8, 12.2, 12.5, 12.1, 13.0],
-        borderColor: "#4F46E5",
-        backgroundColor: "rgba(79, 70, 229, 0.1)",
-        fill: true,
-        tension: 0.4
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: '6-Month Price History'
-      }
-    },
-    scales: {
-      y: {
-        beginAtZero: false,
-        title: {
-          display: true,
-          text: 'Price per lb ($)'
+  const fetchComprehensiveData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('Fetching comprehensive data for:', selectedProduct);
+      const response = await axios.get(`http://localhost:8080/api/pricing/comprehensive/${encodeURIComponent(selectedProduct)}`);
+      console.log('Comprehensive data response:', response.data);
+      
+      // Log the full structure of the response
+      console.log('Comprehensive data structure:', JSON.stringify(response.data, null, 2));
+      
+      // Check if we have external products with prices
+      if (response.data.externalProducts && response.data.externalProducts.length > 0) {
+        console.log('External products:', response.data.externalProducts);
+        
+        // If optimalPrice is 0, try to calculate an average from external products
+        if (response.data.optimalPrice === 0) {
+          const prices = response.data.externalProducts
+            .filter(product => product.price && product.price > 0)
+            .map(product => product.price);
+          
+          if (prices.length > 0) {
+            const avgPrice = prices.reduce((sum, price) => sum + price, 0) / prices.length;
+            console.log('Calculated average price from external products:', avgPrice);
+            response.data.optimalPrice = avgPrice;
+          }
         }
       }
+      
+      setComprehensiveData(response.data);
+    } catch (err) {
+      setError('Failed to fetch comprehensive pricing data');
+      console.error('Error fetching comprehensive data:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  function showPriceTooltip() {
-    const tooltip = document.getElementById("f2t-tooltip");
-    tooltip.style.display = "block";
-    setTimeout(() => {
-      tooltip.style.display = "none";
-    }, 5000);
-  }
-
-  // Group crops by category
-  const groupedCrops = suggestedPrices.reduce((acc, crop) => {
-    if (!acc[crop.category]) {
-      acc[crop.category] = [];
+  const fetchRecommendations = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      console.log('Fetching recommendations for:', selectedProduct);
+      const response = await axios.get(`http://localhost:8080/api/pricing/recommendations/${encodeURIComponent(selectedProduct)}`);
+      console.log('Recommendations response:', response.data);
+      
+      // Log the full structure of the response
+      console.log('Recommendations structure:', JSON.stringify(response.data, null, 2));
+      
+      setRecommendations(response.data);
+    } catch (err) {
+      setError('Failed to fetch pricing recommendations');
+      console.error('Error fetching recommendations:', err);
+    } finally {
+      setLoading(false);
     }
-    acc[crop.category].push(crop);
-    return acc;
-  }, {});
+  };
 
-  const toggleCategory = (category) => {
-    setCollapsedCategories(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
+  const generateChartData = () => {
+    if (!comprehensiveData || !comprehensiveData.externalProducts) {
+      return;
+    }
+
+    // Extract prices from external products
+    const prices = comprehensiveData.externalProducts
+      .filter(product => product.price && product.price > 0)
+      .map(product => product.price);
+
+    // If we don't have enough prices, generate synthetic data
+    if (prices.length < 3) {
+      const basePrice = comprehensiveData.optimalPrice || 2.49;
+      const syntheticPrices = [];
+      for (let i = 0; i < 10; i++) {
+        // Generate prices with some randomness around the base price
+        const variation = basePrice * (0.8 + Math.random() * 0.4);
+        syntheticPrices.push(Number(variation.toFixed(2)));
+      }
+      
+      // Create chart data with synthetic prices
+      const labels = Array.from({ length: 10 }, (_, i) => `Day ${i + 1}`);
+      setChartData({
+        labels,
+        datasets: [
+          {
+            label: 'Price History',
+            data: syntheticPrices,
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            tension: 0.1
+          }
+        ]
+      });
+    } else {
+      // Create chart data with actual prices
+      const labels = prices.map((_, i) => `Source ${i + 1}`);
+      setChartData({
+        labels,
+        datasets: [
+          {
+            label: 'Price History',
+            data: prices,
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+            tension: 0.1
+          }
+        ]
+      });
+    }
+  };
+
+  const handleProductChange = (event) => {
+    console.log('Product changed to:', event.target.value);
+    setSelectedProduct(event.target.value);
+  };
+
+  // Debug render
+  useEffect(() => {
+    console.log('Current state:', {
+      selectedProduct,
+      comprehensiveData,
+      recommendations,
+      loading,
+      error
+    });
+  }, [selectedProduct, comprehensiveData, recommendations, loading, error]);
+
+  // Helper function to format price
+  const formatPrice = (price) => {
+    if (price === null || price === undefined || price === 0) {
+      return 'N/A';
+    }
+    return `$${price.toFixed(2)}`;
   };
 
   return (
     <div className="farm-dashboard">
-      <header className="dashboard-header">
-        <h1>Farm2Table Pricing Dashboard</h1>
-        <p className="subtitle">Smart pricing for sustainable agriculture</p>
-      </header>
+      <div className="dashboard-header">
+        <h1>Market Insights</h1>
+        <p className="subtitle">Real-time pricing and market analysis</p>
+      </div>
 
-      <div className="dashboard-grid">
-        <div className="left-section">
+      <div className="product-selector">
+        <label htmlFor="product-select">Select Product:</label>
+        <select
+          id="product-select"
+          value={selectedProduct}
+          onChange={handleProductChange}
+        >
+          <option value="">Select a product...</option>
+          {products.map((product) => (
+            <option key={product} value={product}>
+              {product}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {loading && <div className="loading">Loading market data...</div>}
+      {error && <div className="error-message">{error}</div>}
+
+      {comprehensiveData && !loading && !error && (
+        <div className="dashboard-grid">
           <div className="pricing-card">
-            <h2>Real-time Market Price</h2>
-            <div className="product-selector">
-              <label htmlFor="price-product-select">Select Product:</label>
-              <select 
-                id="price-product-select"
-                value={selectedProduct}
-                onChange={(e) => setSelectedProduct(e.target.value)}
-              >
-                {uniqueProducts.map(product => (
-                  <option key={product} value={product}>{product}</option>
-                ))}
-              </select>
-            </div>
-            {pricingData && typeof pricingData.price === 'number' ? (
-              <div className="price-display">
-                <div className="price-value">${pricingData.price.toFixed(2)}</div>
-                <div className="price-label">per lb</div>
-                {pricingData.message && (
-                  <p className="warning-message">{pricingData.message}</p>
-                )}
+            <h2>Current Market Price</h2>
+            <div className="price-display">
+              <div className="price-value">
+                {formatPrice(comprehensiveData.optimalPrice)}
               </div>
-            ) : (
-              <div className="loading">Loading pricing data...</div>
-            )}
+              <div className="price-label">per lb</div>
+            </div>
           </div>
 
-          <div className="chart-card">
-            <h2>Market Price Trend</h2>
-            <div className="product-selector">
-              <label htmlFor="trend-product-select">Select Product:</label>
-              <select 
-                id="trend-product-select"
-                value={selectedProduct}
-                onChange={(e) => setSelectedProduct(e.target.value)}
-              >
-                {uniqueProducts.map(product => (
-                  <option key={product} value={product}>{product}</option>
-                ))}
-              </select>
-            </div>
-            <div style={{ height: '300px' }}>
-              <Line data={chartData} options={chartOptions} />
+          <div className="insights-card">
+            <h2>Market Insights</h2>
+            <div className="insights-grid">
+              <div className="insight-item">
+                <div className="insight-label">Average Price</div>
+                <div className="insight-value">
+                  {formatPrice(comprehensiveData.insights?.averagePrice)}
+                </div>
+              </div>
+              <div className="insight-item">
+                <div className="insight-label">Price Volatility</div>
+                <div className="insight-value">
+                  {formatPrice(comprehensiveData.insights?.priceVolatility)}
+                </div>
+              </div>
+              <div className="insight-item">
+                <div className="insight-label">Demand Trend</div>
+                <div className="insight-value">
+                  {comprehensiveData.insights?.demandTrend || 'N/A'}
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      )}
 
-        <div className="right-section">
-          <div className="category-grid">
-            {Object.entries(groupedCrops).map(([category, crops]) => (
-              <div 
-                key={category}
-                className={`category-card ${collapsedCategories[category] ? 'collapsed' : ''}`}
-                onClick={() => toggleCategory(category)}
-              >
-                <h3>{category}</h3>
-                <div className="crop-list">
-                  {crops.map((crop) => (
-                    <div key={crop.name} className="crop-item">
-                      <input
-                        type="checkbox"
-                        id={`f2t-${crop.name}`}
-                        checked={selectedCrops.includes(crop.name)}
-                        onChange={(e) => {
-                          const isChecked = e.target.checked;
-                          setSelectedCrops(isChecked ? [...selectedCrops, crop.name] : selectedCrops.filter((c) => c !== crop.name));
-                        }}
-                      />
-                      <span className="crop-name">{crop.name}</span>
-                      <span className="crop-price">${crop.basePrice.toFixed(2)}/lb</span>
-                    </div>
-                  ))}
-                </div>
+      {chartData && !loading && !error && (
+        <div className="chart-card">
+          <h2>Price History</h2>
+          <div className="chart-container">
+            <Line 
+              data={chartData} 
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: `${selectedProduct} Price History`
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: false,
+                    title: {
+                      display: true,
+                      text: 'Price ($)'
+                    }
+                  }
+                }
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {recommendations && !loading && !error && (
+        <div className="recommendations-card">
+          <h2>Pricing Recommendations</h2>
+          <div className="recommendations-list">
+            {recommendations.recommendations?.map((rec, index) => (
+              <div key={index} className="recommendation-item">
+                <div className="recommendation-type">{rec.type}</div>
+                <div className="recommendation-price">{formatPrice(rec.price)}</div>
+                <div className="recommendation-reason">{rec.reason}</div>
               </div>
             ))}
           </div>
         </div>
-      </div>
-
-      <div className="action-section">
-        <button id="f2t-apply-btn" className="apply-button">
-          Apply Selected Prices
-        </button>
-        <div id="f2t-tooltip" className="tooltip" style={{ display: 'none' }}>
-          Prices have been updated!
-        </div>
-      </div>
+      )}
     </div>
   );
-}
+};
 
-export default MarketInsights; 
+export default MarketInsights;
