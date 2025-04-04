@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { db } from '../firebase/Firebase';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import './Profile.css';
 
 const Profile = () => {
+  const { currentUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState({ type: '', text: '' });
   const [userData, setUserData] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
-    role: 'Admin',
-    company: 'Farm2Table Inc.',
-    location: 'New York, NY',
-    bio: 'Experienced agricultural technology professional with a passion for sustainable farming.',
+    name: '',
+    email: '',
+    phone: '',
+    role: '',
+    company: '',
+    location: '',
+    bio: '',
   });
 
-  const [activityHistory] = useState([
+  const [activityHistory, setActivityHistory] = useState([
     {
       id: 1,
       action: 'Updated market insights',
@@ -40,20 +46,180 @@ const Profile = () => {
     },
   ]);
 
+  // Fetch user profile data from Firestore
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!currentUser) return;
+      
+      try {
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
+          // User profile exists, load it
+          setUserData(userDoc.data());
+        } else {
+          // Create a new user profile with default values
+          const defaultUserData = {
+            name: currentUser.displayName || '',
+            email: currentUser.email || '',
+            phone: '',
+            role: 'User',
+            company: '',
+            location: '',
+            bio: '',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          await setDoc(userDocRef, defaultUserData);
+          setUserData(defaultUserData);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        setSaveMessage({
+          type: 'error',
+          text: 'Failed to load profile data. Please refresh the page.'
+        });
+      }
+    };
+    
+    fetchUserProfile();
+  }, [currentUser]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData(prev => ({
       ...prev,
       [name]: value
     }));
+    // Clear any previous save messages when user makes changes
+    setSaveMessage({ type: '', text: '' });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsEditing(false);
-    // Here you would typically make an API call to update the user data
-    console.log('Updated user data:', userData);
+  const validateForm = () => {
+    const errors = [];
+    
+    if (!userData.name.trim()) {
+      errors.push('Name is required');
+    }
+    
+    if (!userData.email.trim()) {
+      errors.push('Email is required');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
+      errors.push('Please enter a valid email address');
+    }
+    
+    if (!userData.phone.trim()) {
+      errors.push('Phone number is required');
+    }
+    
+    if (!userData.company.trim()) {
+      errors.push('Company name is required');
+    }
+    
+    if (!userData.location.trim()) {
+      errors.push('Location is required');
+    }
+    
+    return errors;
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!currentUser) {
+      setSaveMessage({
+        type: 'error',
+        text: 'You must be logged in to update your profile.'
+      });
+      return;
+    }
+    
+    const errors = validateForm();
+    if (errors.length > 0) {
+      setSaveMessage({
+        type: 'error',
+        text: errors.join(', ')
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    
+    try {
+      // Update user profile in Firestore
+      const userDocRef = doc(db, 'users', currentUser.uid);
+      const updatedData = {
+        ...userData,
+        updatedAt: new Date().toISOString()
+      };
+      
+      await updateDoc(userDocRef, updatedData);
+      
+      // Add new activity
+      const newActivity = {
+        id: Date.now(),
+        action: 'Updated profile information',
+        date: new Date().toLocaleString(),
+        type: 'update'
+      };
+      
+      setActivityHistory(prev => [newActivity, ...prev]);
+      
+      setSaveMessage({
+        type: 'success',
+        text: 'Profile updated successfully!'
+      });
+      
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setSaveMessage({
+        type: 'error',
+        text: 'Failed to save changes. Please try again.'
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    // Reload the saved data from Firestore
+    const fetchUserProfile = async () => {
+      if (!currentUser) return;
+      
+      try {
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
+          setUserData(userDoc.data());
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+    
+    fetchUserProfile();
+    setIsEditing(false);
+    setSaveMessage({ type: '', text: '' });
+  };
+
+  if (!currentUser) {
+    return (
+      <div className="profile-page">
+        <div className="profile-header">
+          <h1>Profile</h1>
+        </div>
+        <div className="profile-content">
+          <div className="profile-section">
+            <p>Please log in to view and edit your profile.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-page">
@@ -61,18 +227,25 @@ const Profile = () => {
         <h1>Profile</h1>
         <button 
           className={`edit-button ${isEditing ? 'cancel' : ''}`}
-          onClick={() => setIsEditing(!isEditing)}
+          onClick={isEditing ? handleCancel : () => setIsEditing(true)}
+          disabled={isSaving}
         >
           {isEditing ? 'Cancel' : 'Edit Profile'}
         </button>
       </div>
 
+      {saveMessage.text && (
+        <div className={`save-message ${saveMessage.type}`}>
+          {saveMessage.text}
+        </div>
+      )}
+
       <div className="profile-content">
         <div className="profile-section">
           <div className="profile-avatar">
-            <img src="/default-avatar.svg" alt="Profile" />
+            <img src={currentUser.photoURL || "/default-avatar.svg"} alt="Profile" />
             {isEditing && (
-              <button className="change-avatar">
+              <button className="change-avatar" disabled={isSaving}>
                 Change Photo
               </button>
             )}
@@ -86,7 +259,8 @@ const Profile = () => {
                 name="name"
                 value={userData.name}
                 onChange={handleInputChange}
-                disabled={!isEditing}
+                disabled={!isEditing || isSaving}
+                required
               />
             </div>
 
@@ -97,7 +271,8 @@ const Profile = () => {
                 name="email"
                 value={userData.email}
                 onChange={handleInputChange}
-                disabled={!isEditing}
+                disabled={!isEditing || isSaving}
+                required
               />
             </div>
 
@@ -108,7 +283,8 @@ const Profile = () => {
                 name="phone"
                 value={userData.phone}
                 onChange={handleInputChange}
-                disabled={!isEditing}
+                disabled={!isEditing || isSaving}
+                required
               />
             </div>
 
@@ -129,7 +305,8 @@ const Profile = () => {
                 name="company"
                 value={userData.company}
                 onChange={handleInputChange}
-                disabled={!isEditing}
+                disabled={!isEditing || isSaving}
+                required
               />
             </div>
 
@@ -140,7 +317,8 @@ const Profile = () => {
                 name="location"
                 value={userData.location}
                 onChange={handleInputChange}
-                disabled={!isEditing}
+                disabled={!isEditing || isSaving}
+                required
               />
             </div>
 
@@ -150,14 +328,18 @@ const Profile = () => {
                 name="bio"
                 value={userData.bio}
                 onChange={handleInputChange}
-                disabled={!isEditing}
+                disabled={!isEditing || isSaving}
                 rows="4"
               />
             </div>
 
             {isEditing && (
-              <button type="submit" className="save-button">
-                Save Changes
+              <button 
+                type="submit" 
+                className="save-button"
+                disabled={isSaving}
+              >
+                {isSaving ? 'Saving...' : 'Save Changes'}
               </button>
             )}
           </form>

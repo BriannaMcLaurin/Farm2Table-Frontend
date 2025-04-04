@@ -8,6 +8,7 @@ const SignUp = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    role: 'user' // Default role
   });
   const [loading, setLoading] = useState(false);
   const { signup, error, setError } = useAuth();
@@ -31,8 +32,13 @@ const SignUp = () => {
     
     setLoading(true);
     try {
-      await signup(formData.email, formData.password);
-      navigate('/dashboard');
+      await signup(formData.email, formData.password, formData.role);
+      // Navigate based on role
+      if (formData.role === 'farmer') {
+        navigate('/dashboard');
+      } else {
+        navigate('/market');
+      }
     } catch (err) {
       setError(err.message);
     }
@@ -83,6 +89,26 @@ const SignUp = () => {
                 onChange={handleChange}
                 required
               />
+            </div>
+          </div>
+
+          <div className="form-group role-selection">
+            <label>Join as:</label>
+            <div className="role-buttons">
+              <button
+                type="button"
+                className={`role-button ${formData.role === 'user' ? 'active' : ''}`}
+                onClick={() => handleChange({ target: { name: 'role', value: 'user' } })}
+              >
+                Customer
+              </button>
+              <button
+                type="button"
+                className={`role-button ${formData.role === 'farmer' ? 'active' : ''}`}
+                onClick={() => handleChange({ target: { name: 'role', value: 'farmer' } })}
+              >
+                Farmer
+              </button>
             </div>
           </div>
           

@@ -9,7 +9,7 @@ const Login = () => {
     password: '',
   });
   const [loading, setLoading] = useState(false);
-  const { login, error, setError } = useAuth();
+  const { login, error, setError, userRole } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -26,7 +26,12 @@ const Login = () => {
     setLoading(true);
     try {
       await login(formData.email, formData.password);
-      navigate('/dashboard');
+      // Navigate based on role
+      if (userRole === 'farmer') {
+        navigate('/dashboard');
+      } else {
+        navigate('/market');
+      }
     } catch (err) {
       setError(err.message);
     }

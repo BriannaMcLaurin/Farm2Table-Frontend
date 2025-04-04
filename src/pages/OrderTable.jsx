@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import './OrderTable.css';
 
 const backendURL = "http://localhost:8080/orders";
 
@@ -13,16 +14,15 @@ function OrderTable() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newOrder, setNewOrder] = useState({
-  orderId: "",
-  buyerName: "",
-  product: "",
-  price: "",
-  date: "",
-  status: "",
-  trackingNumber: "",
-  carrier: ""
-});
-
+    orderId: "",
+    buyerName: "",
+    product: "",
+    price: "",
+    date: "",
+    status: "",
+    trackingNumber: "",
+    carrier: ""
+  });
 
   const fetchOrders = () => {
     axios.get(backendURL)
@@ -60,7 +60,6 @@ function OrderTable() {
       d1.getFullYear() === d2.getFullYear()
     );
   };
-  
 
   // Filter logic
   const filteredOrders = orders
@@ -82,15 +81,13 @@ function OrderTable() {
     })
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-    const formatDate = (date) => {
-      const d = new Date(date);
-      const month = d.getMonth() + 1;
-      const day = d.getDate();
-      const year = d.getFullYear().toString().slice(-2);
-      return `${month}/${day}/${year}`; 
-    };
-
- 
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    const year = d.getFullYear().toString().slice(-2);
+    return `${month}/${day}/${year}`; 
+  };
 
   const trackOrder = (orderId) => {
     axios.get(`http://localhost:8080/orders/track/${orderId}`)
@@ -101,18 +98,15 @@ function OrderTable() {
   const handleAddOrder = () => {
     axios.post("http://localhost:8080/orders", newOrder)
       .then(() => {
-        fetchOrders(); // refresh the list
-        setShowAddModal(false); // close modal
-        setNewOrder({}); // reset form
+        fetchOrders();
+        setShowAddModal(false);
+        setNewOrder({});
       })
       .catch(err => alert("Error adding order"));
   };
-  
-  
-  
 
   return (
-    <div>
+    <div className="order-table-container">
       <h2>Order Management</h2>
 
       <div className="filters">
@@ -145,7 +139,9 @@ function OrderTable() {
         />
       </div>
 
-      <button onClick={() => setShowAddModal(true)}>Add New Order</button>
+      <button className="add-order-button" onClick={() => setShowAddModal(true)}>
+        Add New Order
+      </button>
 
       <table className="order-table">
         <thead>
@@ -160,47 +156,100 @@ function OrderTable() {
           </tr>
         </thead>
         <tbody>
-          {filteredOrders.map(order => (
-            <tr key={order.orderId}>
-              <td>{order.orderId}</td>
-              <td>{order.buyerName}</td>
-              <td>{order.product}</td>
-              <td>${order.price}</td>
-              <td>{order.date}</td>
-              <td><span className={`status-tag ${order.status.replace(" ", "").toLowerCase()}`}>{order.status}</span></td>
-              <td>
-                <button onClick={() => updateStatus(order.orderId, 'Delivered')}>Mark Delivered</button>
-                <button onClick={() => deleteOrder(order.orderId)}>Delete</button>
-                <button onClick={() => trackOrder(order.orderId)}>Track Order</button>
-              </td>
+          {filteredOrders.length === 0 ? (
+            <tr>
+              <td colSpan="7" className="empty-state">No orders found</td>
             </tr>
-          ))}
+          ) : (
+            filteredOrders.map(order => (
+              <tr key={order.orderId}>
+                <td>{order.orderId}</td>
+                <td>{order.buyerName}</td>
+                <td>{order.product}</td>
+                <td>${order.price}</td>
+                <td>{formatDate(order.date)}</td>
+                <td>
+                  <span className={`status-badge status-${order.status.toLowerCase().replace(" ", "-")}`}>
+                    {order.status}
+                  </span>
+                </td>
+                <td>
+                  <div className="action-buttons">
+                    <button className="action-button view-button" onClick={() => trackOrder(order.orderId)}>
+                      Track
+                    </button>
+                    <button className="action-button edit-button" onClick={() => updateStatus(order.orderId, 'Delivered')}>
+                      Mark Delivered
+                    </button>
+                    <button className="action-button delete-button" onClick={() => deleteOrder(order.orderId)}>
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
 
       <div className="pagination">
-        <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>Previous</button>
-        <span>{currentPage} / {totalPages}</span>
-        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>Next</button>
+        <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>
+          Previous
+        </button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>
+          Next
+        </button>
       </div>
+
       {showAddModal && (
-  <div className="modal">
-    <div className="modal-content">
-      <h3>Add New Order</h3>
-      <input placeholder="Order ID" onChange={(e) => setNewOrder({ ...newOrder, orderId: e.target.value })} />
-      <input placeholder="Buyer Name" onChange={(e) => setNewOrder({ ...newOrder, buyerName: e.target.value })} />
-      <input placeholder="Product" onChange={(e) => setNewOrder({ ...newOrder, product: e.target.value })} />
-      <input placeholder="Price" type="number" onChange={(e) => setNewOrder({ ...newOrder, price: parseFloat(e.target.value) })} />
-      <input placeholder="Date (e.g. 3/27/25)" onChange={(e) => setNewOrder({ ...newOrder, date: e.target.value })} />
-      <input placeholder="Status" onChange={(e) => setNewOrder({ ...newOrder, status: e.target.value })} />
-      <input placeholder="Tracking Number" onChange={(e) => setNewOrder({ ...newOrder, trackingNumber: e.target.value })} />
-      <input placeholder="Carrier" onChange={(e) => setNewOrder({ ...newOrder, carrier: e.target.value })} />
-      <br />
-      <button onClick={handleAddOrder}>Submit</button>
-      <button onClick={() => setShowAddModal(false)}>Cancel</button>
-    </div>
-  </div>
-)}
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Add New Order</h3>
+            <input 
+              placeholder="Order ID" 
+              onChange={(e) => setNewOrder({ ...newOrder, orderId: e.target.value })} 
+            />
+            <input 
+              placeholder="Buyer Name" 
+              onChange={(e) => setNewOrder({ ...newOrder, buyerName: e.target.value })} 
+            />
+            <input 
+              placeholder="Product" 
+              onChange={(e) => setNewOrder({ ...newOrder, product: e.target.value })} 
+            />
+            <input 
+              placeholder="Price" 
+              type="number" 
+              onChange={(e) => setNewOrder({ ...newOrder, price: parseFloat(e.target.value) })} 
+            />
+            <input 
+              placeholder="Date (e.g. 3/27/25)" 
+              onChange={(e) => setNewOrder({ ...newOrder, date: e.target.value })} 
+            />
+            <input 
+              placeholder="Status" 
+              onChange={(e) => setNewOrder({ ...newOrder, status: e.target.value })} 
+            />
+            <input 
+              placeholder="Tracking Number" 
+              onChange={(e) => setNewOrder({ ...newOrder, trackingNumber: e.target.value })} 
+            />
+            <input 
+              placeholder="Carrier" 
+              onChange={(e) => setNewOrder({ ...newOrder, carrier: e.target.value })} 
+            />
+            <div className="modal-buttons">
+              <button className="modal-cancel" onClick={() => setShowAddModal(false)}>
+                Cancel
+              </button>
+              <button className="modal-submit" onClick={handleAddOrder}>
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
