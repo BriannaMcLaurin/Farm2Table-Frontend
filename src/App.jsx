@@ -11,7 +11,9 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import FarmerSignUp from './components/Farmer';
+import Market from './Market';
 import './App.css';
+
 function AppRoutes() {
   const { currentUser } = useAuth();
 
@@ -22,6 +24,7 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/farmer-signup" element={<FarmerSignUp />} />
+        <Route path="/market" element={<Market />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );
@@ -38,6 +41,7 @@ function AppRoutes() {
         <Route path="/order-table" element={<OrderTable />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/market" element={<Market />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Layout>
