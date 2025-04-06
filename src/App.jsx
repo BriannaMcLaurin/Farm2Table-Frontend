@@ -1,63 +1,68 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import Market from './Market';
 import Dashboard from './pages/Dashboard';
 import MarketInsights from './pages/MarketInsights';
 import Pricing from './pages/Pricing';
 import OrderTable from './pages/OrderTable';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
-import FarmerSignUp from './components/Farmer';
-import Market from './Market';
+import Home from './pages/Home';
 import './App.css';
 
 function AppRoutes() {
-  const { currentUser } = useAuth();
+  const { currentUser, userRole } = useAuth();
+  
+  // Force the routing based on user role
+  const isFarmer = userRole === 'farmer';
+  console.log('App - Current user role:', userRole);
+  console.log('App - Is farmer:', isFarmer);
 
-  // If user is not authenticated, show auth pages without layout
-  if (!currentUser) {
-    return (
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/farmer-signup" element={<FarmerSignUp />} />
-        <Route path="/market" element={<Market />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    );
-  }
-
-  // If user is authenticated, show main layout with sidebar and header
   return (
-    <Layout>
-      <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/market-insights" element={<MarketInsights />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/order-table" element={<OrderTable />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/market" element={<Market />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </Layout>
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={!currentUser ? <Home /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
+      <Route path="/login" element={!currentUser ? <Login /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
+      <Route path="/signup" element={!currentUser ? <SignUp /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
+
+      {/* Protected routes */}
+      <Route
+        path="/*"
+        element={
+          currentUser ? (
+            <Layout>
+              <Routes>
+                <Route path="/dashboard" element={isFarmer ? <Dashboard /> : <Navigate to="/market" replace />} />
+                <Route path="/market" element={<Market />} />
+                <Route path="/market-insights" element={isFarmer ? <MarketInsights /> : <Navigate to="/market" replace />} />
+                <Route path="/pricing" element={isFarmer ? <Pricing /> : <Navigate to="/market" replace />} />
+                <Route path="/order-table" element={isFarmer ? <OrderTable /> : <Navigate to="/market" replace />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="*" element={<Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
+              </Routes>
+            </Layout>
+          ) : (
+            <Navigate to="/" replace />
+          )
+        }
+      />
+    </Routes>
   );
 }
 
-const App = () => {
+function App() {
   return (
-    <Router>
-      <AuthProvider>
-        <div className="app-container">
-          <AppRoutes />
-        </div>
-      </AuthProvider>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
   );
-};
+}
 
 export default App;

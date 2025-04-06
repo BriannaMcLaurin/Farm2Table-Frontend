@@ -32,14 +32,19 @@ const SignUp = () => {
     
     setLoading(true);
     try {
-      await signup(formData.email, formData.password, formData.role);
+      const { role } = await signup(formData.email, formData.password, formData.role);
+      console.log('SignUp - User role:', role);
+      
       // Navigate based on role
-      if (formData.role === 'farmer') {
+      if (role === 'farmer') {
+        console.log('SignUp - Navigating to dashboard');
         navigate('/dashboard');
       } else {
+        console.log('SignUp - Navigating to market');
         navigate('/market');
       }
     } catch (err) {
+      console.error('SignUp error:', err);
       setError(err.message);
     }
     setLoading(false);

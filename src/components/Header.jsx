@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
-const Header = ({ onToggleSidebar, isSidebarCollapsed }) => {
+const Header = ({ onToggleSidebar, isSidebarCollapsed, showToggle }) => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -20,28 +20,37 @@ const Header = ({ onToggleSidebar, isSidebarCollapsed }) => {
     <header className="header">
       <div className="header-content">
         <div className="header-left">
-          <button 
-            className="toggle-sidebar"
-            onClick={onToggleSidebar}
-            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isSidebarCollapsed ? '☰' : '←'}
-          </button>
+          {showToggle && (
+            <button 
+              className="toggle-sidebar"
+              onClick={onToggleSidebar}
+              aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {isSidebarCollapsed ? '☰' : '←'}
+            </button>
+          )}
           <div className="logo">
-            <img src="/logo.svg" alt="Farm2Table Logo" />
+            <img src="/favicon.svg" alt="Farm2Table Logo" className="header-logo" />
             <span>Farm2Table</span>
           </div>
         </div>
         <div className="header-right">
           <nav className="header-nav">
             <ul>
+              <li><a href="/market">🛒</a></li>
               <li><a href="/notifications">🔔</a></li>
               <li><a href="/help">❓</a></li>
             </ul>
           </nav>
           <div className="user-menu">
-            <img src="/default-avatar.svg" alt="User Avatar" className="avatar" />
-            <span className="username">{currentUser?.email}</span>
+            <div 
+              className="profile-link" 
+              onClick={() => navigate('/profile')}
+              style={{ cursor: 'pointer' }}
+            >
+              <img src="/default-avatar.svg" alt="User Avatar" className="avatar" />
+              <span className="username">{currentUser?.email}</span>
+            </div>
             <button onClick={handleLogout} className="logout-button">
               Logout
             </button>

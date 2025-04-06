@@ -8,9 +8,13 @@ const products = [
     price: "$5.25", 
     image: "https://static.wixstatic.com/media/872702_c379dbb493e34c2eaf8b20a41322c9ea~mv2.jpg/v1/fill/w_520,h_390,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/872702_c379dbb493e34c2eaf8b20a41322c9ea~mv2.jpg",
     category: "Fruits & Veggies",
-    description: "Sweet and juicy organic strawberries",
+    description: "Sweet and juicy organic strawberries, picked fresh from local farms. Perfect for desserts or healthy snacking.",
     unit: "pint",
-    inStock: true
+    inStock: true,
+    rating: 4.8,
+    reviews: 124,
+    farmer: "Green Valley Farms",
+    location: "Local"
   },
   { 
     id: 2,
@@ -18,9 +22,13 @@ const products = [
     price: "$4.50", 
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaTOlBTC1nQ3TdOsvd7PFhnSqUZhgdb4XFmQ&s",
     category: "Fruits & Veggies",
-    description: "Fresh-picked blueberries",
+    description: "Fresh-picked blueberries, bursting with flavor and antioxidants. Great for smoothies or baking.",
     unit: "pint",
-    inStock: true
+    inStock: true,
+    rating: 4.6,
+    reviews: 89,
+    farmer: "Berry Patch Farms",
+    location: "Local"
   },
   { 
     id: 3,
@@ -28,9 +36,13 @@ const products = [
     price: "$2.50", 
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK-Oi68V13zZMEEJWgi1IZOIYIcKLlpR3acg&s",
     category: "Fruits & Veggies",
-    description: "Crisp, organic cucumbers",
+    description: "Crisp, organic cucumbers, perfect for salads or refreshing snacks. Grown without pesticides.",
     unit: "each",
-    inStock: true
+    inStock: true,
+    rating: 4.5,
+    reviews: 67,
+    farmer: "Fresh Fields Farm",
+    location: "Local"
   },
   { 
     id: 4,
@@ -38,9 +50,13 @@ const products = [
     price: "$4.99", 
     image: "https://admin.marketwagon.com/uploads/161223538888729354-410B-4293-9C8C-C5472D1C8500.jpeg.webp",
     category: "Dairy",
-    description: "Farm-fresh whole milk",
+    description: "Farm-fresh whole milk, rich and creamy. From grass-fed cows, pasteurized for safety.",
     unit: "gallon",
-    inStock: true
+    inStock: true,
+    rating: 4.7,
+    reviews: 156,
+    farmer: "Dairy Delight Farms",
+    location: "Local"
   },
   { 
     id: 5,
@@ -48,9 +64,13 @@ const products = [
     price: "$5.99", 
     image: "https://admin.marketwagon.com/uploads/1612234917AB094FC1-6604-4BDE-BC4E-53653D48B022.jpeg.webp",
     category: "Dairy",
-    description: "Rich and creamy chocolate milk",
+    description: "Rich and creamy chocolate milk made with real cocoa. Perfect for a sweet treat.",
     unit: "gallon",
-    inStock: true
+    inStock: true,
+    rating: 4.9,
+    reviews: 98,
+    farmer: "Dairy Delight Farms",
+    location: "Local"
   },
   { 
     id: 6,
@@ -58,9 +78,13 @@ const products = [
     price: "$4.25", 
     image: "https://ediblealaska.ediblecommunities.com/wp-content/uploads/2024/08/carrot-cult_01-789x1024.jpg",
     category: "Fruits & Veggies",
-    description: "Fresh organic carrots",
+    description: "Fresh organic carrots, sweet and crunchy. Packed with vitamins and perfect for snacking.",
     unit: "bunch",
-    inStock: true
+    inStock: true,
+    rating: 4.6,
+    reviews: 112,
+    farmer: "Root Cellar Farms",
+    location: "Local"
   }
 ];
 
@@ -74,6 +98,7 @@ function Market() {
       max: 50
     }
   });
+  const [showCart, setShowCart] = useState(false);
 
   const addToCart = (product) => {
     const existingItem = cart.find(item => item.id === product.id);
@@ -86,6 +111,7 @@ function Market() {
     } else {
       setCart([...cart, { ...product, quantity: 1 }]);
     }
+    setShowCart(true);
   };
 
   const removeFromCart = (productId) => {
@@ -121,6 +147,13 @@ function Market() {
     }));
   };
 
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => {
+      const price = parseFloat(item.price.replace('$', ''));
+      return total + (price * item.quantity);
+    }, 0).toFixed(2);
+  };
+
   const filteredProducts = products.filter(product => {
     if (filters.categories.length && !filters.categories.includes(product.category)) {
       return false;
@@ -132,47 +165,68 @@ function Market() {
     return true;
   });
 
+  const renderStars = (rating) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<span key={`star-${i}`}>★</span>);
+    }
+    if (hasHalfStar) {
+      stars.push(<span key="half-star">½</span>);
+    }
+    const emptyStars = 5 - stars.length;
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<span key={`empty-${i}`}>☆</span>);
+    }
+    return stars;
+  };
+
   return (
     <div className="market-container">
       <nav className="market-nav">
         <h1>Farm2Table</h1>
         <div className="nav-buttons">
           <div className="cart-container">
-            <button className="cart-button">
+            <button 
+              className="cart-button"
+              onClick={() => setShowCart(!showCart)}
+            >
               <span className="cart-text">Cart ({cart.length})</span>
               {cart.length > 0 && (
-                <div className="cart-dropdown">
-                  {cart.map(item => (
+                <div className={`cart-dropdown ${showCart ? 'show' : ''}`}>
+                  {cart.map((item) => (
                     <div key={item.id} className="cart-item">
                       <div className="cart-item-info">
-                        <p className="item-name">{item.name}</p>
-                        <p className="item-price">{item.price}</p>
+                        <div className="item-name">{item.name}</div>
+                        <div className="item-price">{item.price}</div>
                       </div>
                       <div className="quantity-controls">
                         <button 
-                          onClick={() => updateQuantity(item.id, Math.max(0, item.quantity - 1))}
                           className="quantity-btn"
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         >
                           -
                         </button>
                         <span className="quantity">{item.quantity}</span>
                         <button 
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           className="quantity-btn"
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         >
                           +
                         </button>
                         <button 
-                          onClick={() => removeFromCart(item.id)}
                           className="remove-btn"
+                          onClick={() => removeFromCart(item.id)}
                         >
-                          Remove
+                          ×
                         </button>
                       </div>
                     </div>
                   ))}
                   <div className="cart-total">
-                    <p>Total: ${cart.reduce((sum, item) => sum + (parseFloat(item.price.replace('$', '')) * item.quantity), 0).toFixed(2)}</p>
+                    Total: ${calculateTotal()}
                   </div>
                 </div>
               )}
@@ -180,60 +234,61 @@ function Market() {
           </div>
         </div>
       </nav>
+
       <div className="market-grid">
         <aside className="filters">
-          <h2>Keywords</h2>
+          <h2>Filters</h2>
           <div className="filter-box">
             <div className="filter-section">
               <h3>Categories</h3>
-              <ul>
-                <li>
+              <div className="filter-list">
+                <div className="filter-item">
                   <label className="filter-label">
+                    <span className="filter-text">Fruits & Veggies</span>
                     <input 
                       type="checkbox" 
                       checked={filters.categories.includes("Fruits & Veggies")}
                       onChange={() => toggleFilter("categories", "Fruits & Veggies")}
                     />
-                    Fruits & Veggies
                   </label>
-                </li>
-                <li>
+                </div>
+                <div className="filter-item">
                   <label className="filter-label">
+                    <span className="filter-text">Dairy</span>
                     <input 
                       type="checkbox" 
                       checked={filters.categories.includes("Dairy")}
                       onChange={() => toggleFilter("categories", "Dairy")}
                     />
-                    Dairy
                   </label>
-                </li>
-              </ul>
+                </div>
+              </div>
             </div>
             
             <div className="filter-section">
               <h3>Labels</h3>
-              <ul>
-                <li>
+              <div className="filter-list">
+                <div className="filter-item">
                   <label className="filter-label">
+                    <span className="filter-text">Organic</span>
                     <input 
                       type="checkbox" 
                       checked={filters.labels.includes("Organic")}
                       onChange={() => toggleFilter("labels", "Organic")}
                     />
-                    Organic
                   </label>
-                </li>
-                <li>
+                </div>
+                <div className="filter-item">
                   <label className="filter-label">
+                    <span className="filter-text">Local</span>
                     <input 
                       type="checkbox" 
                       checked={filters.labels.includes("Local")}
                       onChange={() => toggleFilter("labels", "Local")}
                     />
-                    Local
                   </label>
-                </li>
-              </ul>
+                </div>
+              </div>
             </div>
 
             <div className="filter-section">
@@ -275,13 +330,23 @@ function Market() {
             </div>
           </div>
         </aside>
+
         <main className="products-grid">
           {filteredProducts.map((product) => (
             <div key={product.id} className="product-card">
               <img src={product.image} alt={product.name} className="product-image" />
               <div className="product-info">
                 <h2 className="product-name">{product.name}</h2>
+                <div className="product-rating">
+                  <span className="stars">{renderStars(product.rating)}</span>
+                  <span className="review-count">({product.reviews} reviews)</span>
+                </div>
                 <p className="product-price">{product.price}</p>
+                <p className="product-description">{product.description}</p>
+                <div className="product-meta">
+                  <span className="farmer">By {product.farmer}</span>
+                  <span className="location">{product.location}</span>
+                </div>
                 <button 
                   onClick={() => addToCart(product)}
                   className="add-to-cart-btn"

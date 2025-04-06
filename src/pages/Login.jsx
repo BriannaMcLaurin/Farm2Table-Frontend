@@ -25,14 +25,19 @@ const Login = () => {
     setError('');
     setLoading(true);
     try {
-      await login(formData.email, formData.password);
+      const { role } = await login(formData.email, formData.password);
+      console.log('Login - User role:', role);
+      
       // Navigate based on role
-      if (userRole === 'farmer') {
+      if (role === 'farmer') {
+        console.log('Login - Navigating to dashboard');
         navigate('/dashboard');
       } else {
+        console.log('Login - Navigating to market');
         navigate('/market');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError(err.message);
     }
     setLoading(false);
@@ -41,8 +46,8 @@ const Login = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h1>Welcome Back</h1>
-        <p className="subtitle">Sign in to your account</p>
+        <h1>Sign In</h1>
+        <p className="subtitle">Welcome back to Farm2Table</p>
         
         {error && <div className="error-message">{error}</div>}
         
@@ -73,11 +78,10 @@ const Login = () => {
           
           <div className="form-options">
             <label className="remember-me">
-              <input type="checkbox" />
-              Remember me
+              <input type="checkbox" /> Remember me
             </label>
             <Link to="/forgot-password" className="forgot-password">
-              Forgot password?
+              Forgot Password?
             </Link>
           </div>
           
@@ -86,7 +90,7 @@ const Login = () => {
             className="auth-button"
             disabled={loading}
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
         
