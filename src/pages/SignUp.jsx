@@ -40,8 +40,8 @@ const SignUp = () => {
         console.log('SignUp - Navigating to dashboard');
         navigate('/dashboard');
       } else {
-        console.log('SignUp - Navigating to market');
-        navigate('/market');
+        console.log('SignUp - Navigating to subscription page');
+        navigate('/subscription');
       }
     } catch (err) {
       console.error('SignUp error:', err);

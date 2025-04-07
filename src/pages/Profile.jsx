@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { db } from '../firebase/Firebase';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
 const Profile = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, deleteAccount } = useAuth();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState({ type: '', text: '' });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [userData, setUserData] = useState({
     name: '',
     email: '',
@@ -206,6 +210,25 @@ const Profile = () => {
     setSaveMessage({ type: '', text: '' });
   };
 
+  const handleDeleteAccount = async () => {
+    if (!currentUser) return;
+    
+    setIsDeleting(true);
+    try {
+      await deleteAccount();
+      navigate('/');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      setSaveMessage({
+        type: 'error',
+        text: 'Failed to delete account. Please try again.'
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   if (!currentUser) {
     return (
       <div className="profile-page">
@@ -222,142 +245,173 @@ const Profile = () => {
   }
 
   return (
-    <div className="profile-page">
+    <div className="profile-container">
       <div className="profile-header">
         <h1>Profile</h1>
-        <button 
-          className={`edit-button ${isEditing ? 'cancel' : ''}`}
-          onClick={isEditing ? handleCancel : () => setIsEditing(true)}
-          disabled={isSaving}
-        >
-          {isEditing ? 'Cancel' : 'Edit Profile'}
-        </button>
+        {!isEditing ? (
+          <button className="edit-button" onClick={() => setIsEditing(true)}>
+            Edit Profile
+          </button>
+        ) : (
+          <div className="action-buttons">
+            <button 
+              className="save-button" 
+              onClick={handleSubmit}
+              disabled={isSaving}
+            >
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
+            <button 
+              className="cancel-button" 
+              onClick={handleCancel}
+              disabled={isSaving}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
       </div>
 
       {saveMessage.text && (
-        <div className={`save-message ${saveMessage.type}`}>
+        <div className={`message ${saveMessage.type}`}>
           {saveMessage.text}
         </div>
       )}
 
       <div className="profile-content">
         <div className="profile-section">
-          <div className="profile-avatar">
-            <img src={currentUser.photoURL || "/default-avatar.svg"} alt="Profile" />
-            {isEditing && (
-              <button className="change-avatar" disabled={isSaving}>
-                Change Photo
-              </button>
-            )}
-          </div>
-
-          <form onSubmit={handleSubmit} className="profile-form">
+          <h2>Personal Information</h2>
+          <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Full Name</label>
+              <label htmlFor="name">Name</label>
               <input
                 type="text"
+                id="name"
                 name="name"
                 value={userData.name}
                 onChange={handleInputChange}
-                disabled={!isEditing || isSaving}
-                required
+                disabled={!isEditing}
               />
             </div>
 
             <div className="form-group">
-              <label>Email</label>
+              <label htmlFor="email">Email</label>
               <input
                 type="email"
+                id="email"
                 name="email"
                 value={userData.email}
                 onChange={handleInputChange}
-                disabled={!isEditing || isSaving}
-                required
+                disabled={!isEditing}
               />
             </div>
 
             <div className="form-group">
-              <label>Phone</label>
+              <label htmlFor="phone">Phone</label>
               <input
                 type="tel"
+                id="phone"
                 name="phone"
                 value={userData.phone}
                 onChange={handleInputChange}
-                disabled={!isEditing || isSaving}
-                required
+                disabled={!isEditing}
               />
             </div>
 
             <div className="form-group">
-              <label>Role</label>
+              <label htmlFor="company">Company</label>
               <input
                 type="text"
-                name="role"
-                value={userData.role}
-                disabled
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Company</label>
-              <input
-                type="text"
+                id="company"
                 name="company"
                 value={userData.company}
                 onChange={handleInputChange}
-                disabled={!isEditing || isSaving}
-                required
+                disabled={!isEditing}
               />
             </div>
 
             <div className="form-group">
-              <label>Location</label>
+              <label htmlFor="location">Location</label>
               <input
                 type="text"
+                id="location"
                 name="location"
                 value={userData.location}
                 onChange={handleInputChange}
-                disabled={!isEditing || isSaving}
-                required
+                disabled={!isEditing}
               />
             </div>
 
             <div className="form-group">
-              <label>Bio</label>
+              <label htmlFor="bio">Bio</label>
               <textarea
+                id="bio"
                 name="bio"
                 value={userData.bio}
                 onChange={handleInputChange}
-                disabled={!isEditing || isSaving}
+                disabled={!isEditing}
                 rows="4"
               />
             </div>
-
-            {isEditing && (
-              <button 
-                type="submit" 
-                className="save-button"
-                disabled={isSaving}
-              >
-                {isSaving ? 'Saving...' : 'Save Changes'}
-              </button>
-            )}
           </form>
         </div>
 
-        <div className="activity-section">
-          <h2>Recent Activity</h2>
+        <div className="profile-section">
+          <h2>Account Settings</h2>
+          <div className="account-settings">
+            <div className="setting-item">
+              <div className="setting-info">
+                <h3>Delete Account</h3>
+                <p>Permanently delete your account and all associated data</p>
+              </div>
+              <button 
+                className="delete-account-button"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {showDeleteConfirm && (
+          <div className="delete-confirm-modal">
+            <div className="delete-confirm-content">
+              <h2>Delete Account</h2>
+              <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+              <div className="delete-confirm-buttons">
+                <button 
+                  className="cancel-delete-button"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="confirm-delete-button"
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? 'Deleting...' : 'Yes, Delete My Account'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="profile-section">
+          <h2>Activity History</h2>
           <div className="activity-list">
             {activityHistory.map(activity => (
-              <div key={activity.id} className="activity-item">
+              <div key={activity.id} className={`activity-item ${activity.type}`}>
                 <div className="activity-icon">
                   {activity.type === 'update' && '🔄'}
                   {activity.type === 'add' && '➕'}
                   {activity.type === 'process' && '✅'}
                 </div>
                 <div className="activity-details">
-                  <p className="activity-action">{activity.action}</p>
-                  <p className="activity-date">{activity.date}</p>
+                  <div className="activity-action">{activity.action}</div>
+                  <div className="activity-date">{activity.date}</div>
                 </div>
               </div>
             ))}

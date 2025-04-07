@@ -10,6 +10,7 @@ const Sidebar = ({ isCollapsed }) => {
     { icon: '📦', label: 'Orders', path: '/order-table' },
     { icon: '👥', label: 'Profile', path: '/profile' },
     { icon: '⚙️', label: 'Settings', path: '/settings' },
+    { icon: '🔔', label: 'Subscription', path: '/subscription' },
   ];
 
   return (

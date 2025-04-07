@@ -8,7 +8,7 @@ import './Layout.css';
 const Layout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const location = useLocation();
-  const { userRole } = useAuth();
+  const { userRole, currentUser } = useAuth();
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
@@ -16,20 +16,25 @@ const Layout = ({ children }) => {
 
   // Force the sidebar to be visible for farmers
   const isFarmer = userRole === 'farmer';
+  
+  // Check if the current route is a public route
+  const isPublicRoute = ['/', '/login', '/signup'].includes(location.pathname);
 
   return (
     <div className="layout">
-      <Header 
-        onToggleSidebar={toggleSidebar} 
-        isSidebarCollapsed={isSidebarCollapsed} 
-        showToggle={isFarmer}
-        pageTitle={getPageTitle(location.pathname)}
-      />
-      <div className="content-wrapper">
-        {isFarmer && (
+      {currentUser && (
+        <Header 
+          onToggleSidebar={toggleSidebar} 
+          isSidebarCollapsed={isSidebarCollapsed} 
+          showToggle={isFarmer}
+          pageTitle={getPageTitle(location.pathname)}
+        />
+      )}
+      <div className={`content-wrapper ${!currentUser ? 'no-header' : ''}`}>
+        {currentUser && isFarmer && (
           <Sidebar isCollapsed={isSidebarCollapsed} />
         )}
-        <main className={`main-content ${!isFarmer ? 'no-sidebar' : ''} ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        <main className={`main-content ${!currentUser ? 'no-header' : ''} ${!isFarmer ? 'no-sidebar' : ''} ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
           {children}
         </main>
       </div>
@@ -46,7 +51,8 @@ const getPageTitle = (pathname) => {
     '/pricing': 'Pricing',
     '/order-table': 'Orders',
     '/profile': 'Profile',
-    '/settings': 'Settings'
+    '/settings': 'Settings',
+    '/subscription': 'Subscription'
   };
   return titles[pathname] || 'Farm2Table';
 };

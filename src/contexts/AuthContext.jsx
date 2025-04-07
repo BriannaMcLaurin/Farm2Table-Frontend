@@ -3,9 +3,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  deleteUser
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/Firebase';
 
 const AuthContext = createContext();
@@ -62,6 +63,29 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  async function deleteAccount() {
+    try {
+      if (!currentUser) {
+        throw new Error('No user is currently signed in');
+      }
+
+      // Delete user document from Firestore
+      await deleteDoc(doc(db, 'users', currentUser.uid));
+      
+      // Delete the user account from Firebase Auth
+      await deleteUser(currentUser);
+      
+      // Clear local state
+      setCurrentUser(null);
+      setUserRole(null);
+      
+      return true;
+    } catch (error) {
+      console.error("Delete account error:", error);
+      throw error;
+    }
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -86,6 +110,7 @@ export function AuthProvider({ children }) {
     signup,
     login,
     logout,
+    deleteAccount,
     error,
     setError
   };

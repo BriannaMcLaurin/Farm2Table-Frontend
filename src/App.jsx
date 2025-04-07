@@ -13,6 +13,7 @@ import OrderTable from './pages/OrderTable';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Home from './pages/Home';
+import ConsumerSubscription from './pages/consumer.subscription';
 import './App.css';
 import './styles/theme.css';
 
@@ -29,7 +30,7 @@ function AppRoutes() {
       {/* Public routes */}
       <Route path="/" element={!currentUser ? <Home /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
       <Route path="/login" element={!currentUser ? <Login /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
-      <Route path="/signup" element={!currentUser ? <SignUp /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
+      <Route path="/signup" element={!currentUser ? <SignUp /> : <Navigate to={isFarmer ? '/dashboard' : '/subscription'} replace />} />
       
       {/* Protected routes */}
       <Route path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" replace />} />
@@ -39,6 +40,7 @@ function AppRoutes() {
       <Route path="/order-table" element={currentUser ? <OrderTable /> : <Navigate to="/login" replace />} />
       <Route path="/profile" element={currentUser ? <Profile /> : <Navigate to="/login" replace />} />
       <Route path="/settings" element={currentUser ? <Settings /> : <Navigate to="/login" replace />} />
+      <Route path="/subscription" element={currentUser ? <ConsumerSubscription /> : <Navigate to="/login" replace />} />
     </Routes>
   );
 }

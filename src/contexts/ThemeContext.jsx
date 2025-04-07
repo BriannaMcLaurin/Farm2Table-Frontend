@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 const ThemeContext = createContext();
 
@@ -11,6 +12,7 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
+  const { currentUser } = useAuth();
   const [theme, setTheme] = useState(() => {
     // Get saved theme from localStorage or default to 'light'
     const savedTheme = localStorage.getItem('theme');
@@ -25,14 +27,19 @@ export const ThemeProvider = ({ children }) => {
 
   // Apply theme changes to document
   useEffect(() => {
+    // If user is not signed in, always use light theme
+    const themeToApply = currentUser ? theme : 'light';
+    
     // Remove all existing theme classes
     document.documentElement.classList.remove('theme-light', 'theme-dark');
     // Add new theme class
-    document.documentElement.classList.add(`theme-${theme}`);
+    document.documentElement.classList.add(`theme-${themeToApply}`);
     
-    // Save theme preference
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    // Save theme preference only if user is signed in
+    if (currentUser) {
+      localStorage.setItem('theme', theme);
+    }
+  }, [theme, currentUser]);
 
   // Apply font size changes
   useEffect(() => {
