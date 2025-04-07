@@ -9,7 +9,7 @@ html, body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  background-color: #1a5f2c;
+  background-color: var(--page-bg);
 }
 
 #root {
@@ -50,7 +50,7 @@ html, body {
 .main-content {
   flex: 1;
   padding: 2rem;
-  background-color: #f8f9fa;
+  background-color: var(--page-bg);
   width: 100%;
   margin-top: 64px; /* Same as header height */
   min-height: calc(100vh - 64px); /* Subtract header height from viewport height */
@@ -91,67 +91,7 @@ html, body {
 }
 
 .read-the-docs {
-  color: #27ae60;
-}
-
-/* Dashboard specific styles */
-.dashboard {
-  width: 100%;
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 0.5rem;
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-  width: 100%;
-}
-
-.dashboard-card {
-  background: white;
-  border-radius: 8px;
-  padding: 0.75rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
-}
-
-.dashboard-card h2 {
-  color: #2c3e50;
-  margin-bottom: 0.75rem;
-  font-size: 1.25rem;
-}
-
-.dashboard-card p {
-  color: #4a5568;
-  margin-bottom: 0.5rem;
-}
-
-.dashboard-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.stat-item {
-  text-align: center;
-  padding: 0.75rem;
-  background: #f7fafc;
-  border-radius: 6px;
-}
-
-.stat-item h3 {
-  color: #2c3e50;
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-}
-
-.stat-item p {
-  color: #718096;
-  font-size: 0.875rem;
+  color: var(--accent-color);
 }
 
 /* Responsive adjustments */
@@ -168,14 +108,5 @@ html, body {
   
   .main-content {
     padding: 1rem;
-  }
-  
-  .dashboard {
-    padding: 0.5rem;
-  }
-  
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
   }
 }

@@ -3,6 +3,8 @@
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--page-bg);
+  color: var(--text-primary);
 }
 
 .profile-header {
@@ -11,17 +13,17 @@
   align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .profile-header h1 {
   font-size: 2rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .edit-button {
-  background-color: #228be6;
+  background-color: var(--accent-color);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -32,16 +34,16 @@
 }
 
 .edit-button:hover {
-  background-color: #1c7ed6;
+  background-color: var(--accent-hover);
 }
 
 .edit-button.cancel {
-  background-color: #e9ecef;
-  color: #495057;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .edit-button.cancel:hover {
-  background-color: #dee2e6;
+  background-color: var(--bg-tertiary);
 }
 
 .edit-button:disabled {
@@ -57,15 +59,15 @@
 }
 
 .save-message.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--border-color);
 }
 
 .save-message.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--border-color);
 }
 
 .profile-content {
@@ -75,10 +77,11 @@
 }
 
 .profile-section {
-  background-color: white;
+  background-color: var(--section-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   padding: 2rem;
+  border: 1px solid var(--border-color);
 }
 
 .profile-avatar {
@@ -94,13 +97,13 @@
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1rem;
-  border: 3px solid #e9ecef;
+  border: 3px solid var(--border-color);
 }
 
 .change-avatar {
   background-color: transparent;
-  color: #228be6;
-  border: 1px solid #228be6;
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
@@ -109,7 +112,7 @@
 }
 
 .change-avatar:hover {
-  background-color: #e7f5ff;
+  background-color: var(--bg-secondary);
 }
 
 .change-avatar:disabled {
@@ -131,33 +134,35 @@
 
 .form-group label {
   font-weight: 500;
-  color: #495057;
+  color: var(--text-primary);
 }
 
 .form-group input,
 .form-group textarea {
   padding: 0.75rem;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 1rem;
   transition: all 0.2s ease;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #228be6;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 3px rgba(34, 139, 230, 0.1);
 }
 
 .form-group input:disabled,
 .form-group textarea:disabled {
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
   cursor: not-allowed;
 }
 
 .save-button {
-  background-color: #228be6;
+  background-color: var(--accent-color);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -170,7 +175,7 @@
 }
 
 .save-button:hover {
-  background-color: #1c7ed6;
+  background-color: var(--accent-hover);
 }
 
 .save-button:disabled {
@@ -179,19 +184,20 @@
 }
 
 .activity-section {
-  background-color: white;
+  background-color: var(--section-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   padding: 2rem;
+  border: 1px solid var(--border-color);
 }
 
 .activity-section h2 {
   font-size: 1.5rem;
-  color: #2c3e50;
+  color: var(--text-primary);
   margin-top: 0;
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .activity-list {
@@ -206,12 +212,13 @@
   gap: 1rem;
   padding: 1rem;
   border-radius: 6px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
   transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
 }
 
 .activity-item:hover {
-  background-color: #e9ecef;
+  background-color: var(--bg-tertiary);
 }
 
 .activity-icon {
@@ -221,9 +228,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: white;
+  background-color: var(--bg-primary);
   border-radius: 50%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-shadow);
+  color: var(--accent-color);
 }
 
 .activity-details {
@@ -233,13 +241,13 @@
 .activity-action {
   font-weight: 500;
   margin: 0;
-  color: #2c3e50;
+  color: var(--text-primary);
 }
 
 .activity-date {
   margin: 0.25rem 0 0;
   font-size: 0.875rem;
-  color: #6c757d;
+  color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {

@@ -2,16 +2,20 @@
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  min-height: calc(100vh - 64px);
 }
 
 .dashboard-page h1 {
-  color: #2d3748;
+  color: var(--text-primary);
   font-size: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
 }
 
 .dashboard-page p {
-  color: #718096;
+  color: var(--text-secondary);
   font-size: 1.1rem;
   line-height: 1.6;
 }
@@ -24,16 +28,24 @@
 }
 
 .dashboard-card {
-  background: white;
+  background: var(--section-bg);
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dashboard-card h2 {
-  color: #2d3748;
+  color: var(--text-primary);
   font-size: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
 }
 
 .stats-grid {
@@ -44,23 +56,30 @@
 
 .stat-item {
   text-align: center;
-  padding: 1rem;
-  background: #f7fafc;
-  border-radius: 6px;
+  padding: 1.25rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.stat-item:hover {
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
 }
 
 .stat-value {
   display: block;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: bold;
-  color: #4f46e5;
+  color: var(--accent-color);
+  margin-bottom: 0.5rem;
 }
 
 .stat-label {
   display: block;
-  font-size: 0.875rem;
-  color: #718096;
-  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
 .activity-list {
@@ -71,10 +90,30 @@
 
 .activity-list li {
   padding: 0.75rem 0;
-  border-bottom: 1px solid #e2e8f0;
-  color: #4a5568;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.activity-list li:hover {
+  background-color: var(--bg-secondary);
+  padding-left: 0.5rem;
 }
 
 .activity-list li:last-child {
   border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .dashboard-page {
+    padding: 1rem;
+  }
+  
+  .dashboard-page-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 } 

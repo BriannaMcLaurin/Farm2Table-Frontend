@@ -26,15 +26,6 @@ const Sidebar = ({ isCollapsed }) => {
           ))}
         </ul>
       </nav>
-      <div className="sidebar-footer">
-        <div className="user-info">
-          <img src="/default-avatar.svg" alt="User Avatar" className="avatar" />
-          <div className="user-details">
-            <span className="username">John Doe</span>
-            <span className="role">Admin</span>
-          </div>
-        </div>
-      </div>
     </aside>
   );
 };

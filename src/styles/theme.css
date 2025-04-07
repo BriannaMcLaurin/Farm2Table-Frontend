@@ -1,0 +1,334 @@
+:root {
+  /* Light theme variables (default) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e9ecef;
+  --text-primary: #2c3e50;
+  --text-secondary: #718096;
+  --text-tertiary: #adb5bd;
+  --border-color: #e9ecef;
+  --accent-color: #228be6;
+  --accent-hover: #1c7ed6;
+  --success-bg: #d4edda;
+  --success-text: #155724;
+  --error-bg: #f8d7da;
+  --error-text: #721c24;
+  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --input-bg: #ffffff;
+  --input-border: #e9ecef;
+  --input-text: #2c3e50;
+  --input-placeholder: #adb5bd;
+  --header-bg: #ffffff;
+  --sidebar-bg: #ffffff;
+  --sidebar-hover: #f8f9fa;
+  --table-header-bg: #f8f9fa;
+  --table-row-hover: #f8f9fa;
+  --modal-bg: #ffffff;
+  --modal-overlay: rgba(0, 0, 0, 0.5);
+  --button-bg: #ffffff;
+  --button-text: #2c3e50;
+  --button-border: #e9ecef;
+  --button-hover: #f8f9fa;
+  --scrollbar-thumb: #cbd5e0;
+  --scrollbar-track: #f7fafc;
+  --page-bg: #ffffff;
+  --content-bg: #ffffff;
+  --section-bg: #ffffff;
+}
+
+/* Dark theme variables */
+.theme-dark {
+  --bg-primary: #1a1b1e;
+  --bg-secondary: #25262b;
+  --bg-tertiary: #373a40;
+  --text-primary: #e9ecef;
+  --text-secondary: #adb5bd;
+  --text-tertiary: #868e96;
+  --border-color: #373a40;
+  --accent-color: #339af0;
+  --accent-hover: #228be6;
+  --success-bg: #2b8a3e;
+  --success-text: #d3f9d8;
+  --error-bg: #c92a2a;
+  --error-text: #ffe3e3;
+  --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --input-bg: #25262b;
+  --input-border: #373a40;
+  --input-text: #e9ecef;
+  --input-placeholder: #868e96;
+  --header-bg: #1a1b1e;
+  --sidebar-bg: #25262b;
+  --sidebar-hover: #373a40;
+  --table-header-bg: #25262b;
+  --table-row-hover: #373a40;
+  --modal-bg: #25262b;
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+  --button-bg: #25262b;
+  --button-text: #e9ecef;
+  --button-border: #373a40;
+  --button-hover: #373a40;
+  --scrollbar-thumb: #495057;
+  --scrollbar-track: #25262b;
+  --page-bg: #1a1b1e;
+  --content-bg: #25262b;
+  --section-bg: #25262b;
+}
+
+/* Font size variables */
+.font-small {
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 24px;
+}
+
+.font-medium {
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 28px;
+}
+
+.font-large {
+  --font-size-base: 18px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+}
+
+/* Apply theme variables to common elements */
+html, body {
+  background-color: var(--page-bg);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+}
+
+#root, .app {
+  background-color: var(--page-bg);
+  min-height: 100vh;
+}
+
+.layout {
+  background-color: var(--page-bg);
+  min-height: 100vh;
+}
+
+.content-wrapper {
+  background-color: var(--content-bg);
+}
+
+.main-content {
+  background-color: var(--content-bg);
+}
+
+/* Common component styles using theme variables */
+.card, .settings-section, .profile-section, .activity-section {
+  background-color: var(--section-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+  color: var(--text-primary);
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-tertiary {
+  color: var(--text-tertiary);
+}
+
+/* Buttons */
+button, .btn {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: 1px solid var(--button-border);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+button:hover, .btn:hover {
+  background-color: var(--button-hover);
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Form elements */
+input, select, textarea {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--input-placeholder);
+}
+
+/* Header and navigation */
+header, .header {
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.sidebar-nav .nav-item:hover {
+  background-color: var(--sidebar-hover);
+}
+
+/* Tables */
+table {
+  background-color: var(--section-bg);
+  color: var(--text-primary);
+}
+
+th {
+  background-color: var(--table-header-bg);
+  color: var(--text-primary);
+}
+
+tr:hover {
+  background-color: var(--table-row-hover);
+}
+
+/* Modals */
+.modal-overlay {
+  background-color: var(--modal-overlay);
+}
+
+.modal-content {
+  background-color: var(--modal-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Links */
+a {
+  color: var(--accent-color);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+/* Dividers */
+hr, .divider {
+  border-color: var(--border-color);
+}
+
+/* Code blocks */
+pre, code {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Tooltips */
+.tooltip {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+/* Alerts and notifications */
+.alert {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Badges */
+.badge {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* Progress bars */
+.progress-bar {
+  background-color: var(--accent-color);
+}
+
+.progress-bar-bg {
+  background-color: var(--bg-tertiary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Ensure dark theme is applied to all elements */
+.theme-dark * {
+  color-scheme: dark;
+}
+
+.theme-dark input,
+.theme-dark select,
+.theme-dark textarea {
+  color-scheme: dark;
+}
+
+/* Additional dark theme overrides */
+.theme-dark img {
+  filter: brightness(0.8) contrast(1.2);
+}
+
+.theme-dark svg {
+  fill: var(--text-primary);
+  stroke: var(--text-primary);
+}
+
+/* Page-specific backgrounds */
+.dashboard-page,
+.market-page,
+.profile-page,
+.settings-page,
+.orders-page,
+.insights-page {
+  background-color: var(--page-bg);
+  min-height: 100vh;
+}
+
+.page-container {
+  background-color: var(--content-bg);
+  min-height: calc(100vh - 64px);
+  padding: 2rem;
+}
+
+.section-container {
+  background-color: var(--section-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+} 

@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
-const Header = ({ onToggleSidebar, isSidebarCollapsed, showToggle }) => {
+const Header = ({ onToggleSidebar, isSidebarCollapsed, showToggle, pageTitle }) => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -31,8 +31,9 @@ const Header = ({ onToggleSidebar, isSidebarCollapsed, showToggle }) => {
           )}
           <div className="logo">
             <img src="/favicon.svg" alt="Farm2Table Logo" className="header-logo" />
-            <span>Farm2Table</span>
+            <span className="logo-text">Farm2Table</span>
           </div>
+          <h1 className="page-title">{pageTitle}</h1>
         </div>
         <div className="header-right">
           <nav className="header-nav">
