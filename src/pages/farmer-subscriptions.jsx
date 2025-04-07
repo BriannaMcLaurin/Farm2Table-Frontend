@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './user-subscriptions.css';
-import Sidebar from './Sidebar';
+import './farmer-subscriptions.css';
+import Sidebar from '../components/Sidebar';
 
 const Subscription = () => {
     const [isYearly, setIsYearly] = useState(false);
