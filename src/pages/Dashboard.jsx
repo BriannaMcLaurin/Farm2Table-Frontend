@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  const location = useLocation();
+  
+  useEffect(() => {
+    console.log('Dashboard mounted, current path:', location.pathname);
+  }, [location]);
+
   return (
     <div className="dashboard-page">
       <h1>Dashboard</h1>

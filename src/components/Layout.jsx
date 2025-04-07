@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Header from './Header';
@@ -9,6 +9,12 @@ const Layout = ({ children }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const location = useLocation();
   const { userRole, currentUser } = useAuth();
+
+  useEffect(() => {
+    console.log('Layout - Current path:', location.pathname);
+    console.log('Layout - User role:', userRole);
+    console.log('Layout - Current user:', currentUser ? 'Logged in' : 'Not logged in');
+  }, [location, userRole, currentUser]);
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
@@ -52,7 +58,8 @@ const getPageTitle = (pathname) => {
     '/order-table': 'Orders',
     '/profile': 'Profile',
     '/settings': 'Settings',
-    '/subscription': 'Subscription'
+    '/subscription': 'Subscription',
+    '/farmer-subscription': 'Farmer Subscription'
   };
   return titles[pathname] || 'Farm2Table';
 };

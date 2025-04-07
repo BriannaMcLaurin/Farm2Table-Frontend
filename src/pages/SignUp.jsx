@@ -37,10 +37,10 @@ const SignUp = () => {
       
       // Navigate based on role
       if (role === 'farmer') {
-        console.log('SignUp - Navigating to dashboard');
-        navigate('/dashboard');
+        console.log('SignUp - Navigating to farmer subscription page');
+        navigate('/farmer-subscription');
       } else {
-        console.log('SignUp - Navigating to subscription page');
+        console.log('SignUp - Navigating to consumer subscription page');
         navigate('/subscription');
       }
     } catch (err) {

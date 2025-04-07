@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import './Sidebar.css';
 
 const Sidebar = ({ isCollapsed }) => {
+  const { userRole } = useAuth();
+  
   const menuItems = [
     { icon: '📊', label: 'Dashboard', path: '/' },
     { icon: '🌾', label: 'Market Insights', path: '/market-insights' },
@@ -10,7 +13,6 @@ const Sidebar = ({ isCollapsed }) => {
     { icon: '📦', label: 'Orders', path: '/order-table' },
     { icon: '👥', label: 'Profile', path: '/profile' },
     { icon: '⚙️', label: 'Settings', path: '/settings' },
-    { icon: '🔔', label: 'Subscription', path: '/subscription' },
   ];
 
   return (

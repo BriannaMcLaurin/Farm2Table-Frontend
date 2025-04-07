@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
@@ -14,8 +14,22 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Home from './pages/Home';
 import ConsumerSubscription from './pages/consumer.subscription';
+import FarmerSubscription from './pages/farmer-subscriptions';
 import './App.css';
 import './styles/theme.css';
+
+// Debug component to log route changes
+function RouteDebugger() {
+  const location = useLocation();
+  const { userRole } = useAuth();
+  
+  useEffect(() => {
+    console.log('Route changed to:', location.pathname);
+    console.log('Current user role:', userRole);
+  }, [location, userRole]);
+  
+  return null;
+}
 
 function AppRoutes() {
   const { currentUser, userRole } = useAuth();
@@ -26,22 +40,26 @@ function AppRoutes() {
   console.log('App - Is farmer:', isFarmer);
 
   return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/" element={!currentUser ? <Home /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
-      <Route path="/login" element={!currentUser ? <Login /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
-      <Route path="/signup" element={!currentUser ? <SignUp /> : <Navigate to={isFarmer ? '/dashboard' : '/subscription'} replace />} />
-      
-      {/* Protected routes */}
-      <Route path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" replace />} />
-      <Route path="/market" element={currentUser ? <Market /> : <Navigate to="/login" replace />} />
-      <Route path="/market-insights" element={currentUser ? <MarketInsights /> : <Navigate to="/login" replace />} />
-      <Route path="/pricing" element={currentUser ? <Pricing /> : <Navigate to="/login" replace />} />
-      <Route path="/order-table" element={currentUser ? <OrderTable /> : <Navigate to="/login" replace />} />
-      <Route path="/profile" element={currentUser ? <Profile /> : <Navigate to="/login" replace />} />
-      <Route path="/settings" element={currentUser ? <Settings /> : <Navigate to="/login" replace />} />
-      <Route path="/subscription" element={currentUser ? <ConsumerSubscription /> : <Navigate to="/login" replace />} />
-    </Routes>
+    <>
+      <RouteDebugger />
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={!currentUser ? <Home /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
+        <Route path="/login" element={!currentUser ? <Login /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
+        <Route path="/signup" element={!currentUser ? <SignUp /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
+        
+        {/* Protected routes */}
+        <Route path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" replace />} />
+        <Route path="/market" element={currentUser ? <Market /> : <Navigate to="/login" replace />} />
+        <Route path="/market-insights" element={currentUser ? <MarketInsights /> : <Navigate to="/login" replace />} />
+        <Route path="/pricing" element={currentUser ? <Pricing /> : <Navigate to="/login" replace />} />
+        <Route path="/order-table" element={currentUser ? <OrderTable /> : <Navigate to="/login" replace />} />
+        <Route path="/profile" element={currentUser ? <Profile /> : <Navigate to="/login" replace />} />
+        <Route path="/settings" element={currentUser ? <Settings /> : <Navigate to="/login" replace />} />
+        <Route path="/subscription" element={currentUser ? <ConsumerSubscription /> : <Navigate to="/login" replace />} />
+        <Route path="/farmer-subscription" element={currentUser ? <FarmerSubscription /> : <Navigate to="/login" replace />} />
+      </Routes>
+    </>
   );
 }
 

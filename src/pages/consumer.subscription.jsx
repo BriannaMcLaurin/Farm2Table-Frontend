@@ -1,41 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../components/Sidebar';
+import { useAuth } from '../contexts/AuthContext';
 import '../pages/consumer-subscription.css';
 
 const ConsumerSubscription = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [billingPeriod, setBillingPeriod] = useState('monthly');
+  const [isYearly, setIsYearly] = useState(false);
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
-  const pricingOptions = {
-    monthly: {
-      price: 9.99,
-      label: 'month'
-    },
-    semiannual: {
-      price: 54.99, // 9.99 * 6 = 59.94, discounted to 54.99
-      label: '6 months'
-    },
-    annual: {
-      price: 99.99, // 9.99 * 12 = 119.88, discounted to 99.99
-      label: 'year'
-    }
-  };
-
-  const handlePeriodChange = (period) => {
-    setBillingPeriod(period);
-  };
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
-  const handleSubscribe = () => {
-    // Handle subscription logic here
-    console.log('Subscribing with period:', billingPeriod);
-    // After successful subscription, redirect to market
-    navigate('/market');
+  const togglePricing = () => {
+    setIsYearly(!isYearly);
   };
 
   const handleSkipSubscription = () => {
@@ -43,56 +17,107 @@ const ConsumerSubscription = () => {
     navigate('/market');
   };
 
+  const handleSubscribe = (planName) => {
+    // Handle subscription logic here
+    console.log('Subscribing to plan:', planName, 'with period:', isYearly ? 'yearly' : 'monthly');
+    // After successful subscription, redirect to market
+    navigate('/market');
+  };
+
+  const plans = [
+    {
+      name: 'Basic',
+      monthlyPrice: '$9.99',
+      yearlyPrice: '$95.88',
+      features: [
+        'Free Shipping on Orders',
+        'Access to Basic Deals',
+        'Standard Support'
+      ]
+    },
+    {
+      name: 'Premium',
+      monthlyPrice: '$14.99',
+      yearlyPrice: '$143.88',
+      features: [
+        'Free Shipping on All Orders',
+        'Access to Premium Deals',
+        'Priority Support',
+        'Early Access to Sales'
+      ],
+      isPopular: true
+    },
+    {
+      name: 'Family',
+      monthlyPrice: '$19.99',
+      yearlyPrice: '$191.88',
+      features: [
+        'Free Shipping on All Orders',
+        'Access to All Deals',
+        '24/7 Priority Support',
+        'Family Sharing (up to 5 members)',
+        'Exclusive Member Events'
+      ]
+    }
+  ];
+
   return (
-    <div className="subscription-page">
-      <div className="subscription-container">
-        <h2 className="subscription-title">Choose Your Prime Plan</h2>
+    <div className="subscription-container">
+      <div className="page-section">
+        <h2 className="section-title">Consumer Subscription Plans</h2>
+        <div className="section-divider"></div>
+      </div>
 
-        <div className="subscription-plan">
-          <div className="plan-header">
-            <h3>Prime</h3>
+      <div className="pricing-header">
+        <h1 className="title">Choose Your Plan</h1>
+        <p className="subtitle">Select the perfect plan for your shopping needs</p>
+
+        <div className="pricing-toggle">
+          <span className="toggle-label">Monthly</span>
+          <label className="switch">
+            <input
+              type="checkbox"
+              checked={isYearly}
+              onChange={togglePricing}
+            />
+            <span className="slider round"></span>
+          </label>
+          <span className="toggle-label">Yearly <span className="discount">(Save 20%)</span></span>
+        </div>
+      </div>
+
+      <div className="pricing-grid">
+        {plans.map((plan, index) => (
+          <div key={index} className={`pricing-card ${plan.isPopular ? 'featured' : ''}`}>
+            {plan.isPopular && <div className="popular-tag">Most Popular</div>}
+            <h2>{plan.name}</h2>
             <div className="price">
-              <span className="amount">${pricingOptions[billingPeriod].price}</span>
-              <span className="period">/{pricingOptions[billingPeriod].label}</span>
+              <span className={`monthly-price ${isYearly ? 'hidden' : ''}`}>
+                {plan.monthlyPrice}<span className="period">/month</span>
+              </span>
+              <span className={`yearly-price ${!isYearly ? 'hidden' : ''}`}>
+                {plan.yearlyPrice}<span className="period">/year</span>
+              </span>
             </div>
-          </div>
-
-          <div className="plan-benefits">
-            <ul>
-              <li>Free Shipping on All Orders</li>
-              <li>Access to Prime-Only Deals</li>
+            <ul className="features">
+              {plan.features.map((feature, featureIndex) => (
+                <li key={featureIndex}>{feature}</li>
+              ))}
             </ul>
-          </div>
-        </div>
-
-        <div className="billing-period-toggle">
-          <div className="toggle-label">Billing Period</div>
-          <div className="toggle-container">
-            <button
-              className={`period-option ${billingPeriod === 'monthly' ? 'active' : ''}`}
-              onClick={() => handlePeriodChange('monthly')}
+            <button 
+              className="subscribe-btn" 
+              onClick={() => handleSubscribe(plan.name)}
             >
-              Monthly
-            </button>
-            <button
-              className={`period-option ${billingPeriod === 'semiannual' ? 'active' : ''}`}
-              onClick={() => handlePeriodChange('semiannual')}
-            >
-              6 Months
-            </button>
-            <button
-              className={`period-option ${billingPeriod === 'annual' ? 'active' : ''}`}
-              onClick={() => handlePeriodChange('annual')}
-            >
-              Yearly
+              Subscribe Now
             </button>
           </div>
-        </div>
+        ))}
+      </div>
 
-        <div className="subscription-actions">
-          <button className="subscribe-button" onClick={handleSubscribe}>Subscribe Now</button>
-          <button className="skip-button" onClick={handleSkipSubscription}>Continue Without Subscribing</button>
-        </div>
+      {/* Show the "Continue without Subscription" button regardless of login status */}
+      <div className="no-subscription">
+        <button className="skip-subscription-btn" onClick={handleSkipSubscription}>Continue without Subscription</button>
+        <p className="skip-note">You can always subscribe later</p>
       </div>
     </div>
   );

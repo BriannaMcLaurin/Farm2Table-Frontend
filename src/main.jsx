@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import Subscription from './user-subscriptions'
-import './user-subscriptions.css'
+import App from './App'
+import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <Subscription />
+    <App />
   </React.StrictMode>,
 ) 

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
 const Profile = () => {
-  const { currentUser, deleteAccount } = useAuth();
+  const { currentUser, deleteAccount, userRole } = useAuth();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -229,6 +229,14 @@ const Profile = () => {
     }
   };
 
+  const handleSubscriptionClick = () => {
+    if (userRole === 'farmer') {
+      navigate('/farmer-subscription');
+    } else {
+      navigate('/subscription');
+    }
+  };
+
   if (!currentUser) {
     return (
       <div className="profile-page">
@@ -357,47 +365,20 @@ const Profile = () => {
         </div>
 
         <div className="profile-section">
-          <h2>Account Settings</h2>
-          <div className="account-settings">
-            <div className="setting-item">
-              <div className="setting-info">
-                <h3>Delete Account</h3>
-                <p>Permanently delete your account and all associated data</p>
-              </div>
-              <button 
-                className="delete-account-button"
-                onClick={() => setShowDeleteConfirm(true)}
-              >
-                Delete Account
-              </button>
+          <h2>Subscription</h2>
+          <div className="subscription-info">
+            <div className="subscription-details">
+              <h3>Manage Your Subscription</h3>
+              <p>View and manage your subscription plan details</p>
             </div>
+            <button 
+              className="subscription-button"
+              onClick={handleSubscriptionClick}
+            >
+              {userRole === 'farmer' ? 'Farmer Subscription' : 'Consumer Subscription'}
+            </button>
           </div>
         </div>
-
-        {showDeleteConfirm && (
-          <div className="delete-confirm-modal">
-            <div className="delete-confirm-content">
-              <h2>Delete Account</h2>
-              <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-              <div className="delete-confirm-buttons">
-                <button 
-                  className="cancel-delete-button"
-                  onClick={() => setShowDeleteConfirm(false)}
-                  disabled={isDeleting}
-                >
-                  Cancel
-                </button>
-                <button 
-                  className="confirm-delete-button"
-                  onClick={handleDeleteAccount}
-                  disabled={isDeleting}
-                >
-                  {isDeleting ? 'Deleting...' : 'Yes, Delete My Account'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         <div className="profile-section">
           <h2>Activity History</h2>
@@ -417,7 +398,50 @@ const Profile = () => {
             ))}
           </div>
         </div>
+
+        <div className="profile-section danger-zone">
+          <h2>Account Settings</h2>
+          <div className="account-settings">
+            <div className="setting-item">
+              <div className="setting-info">
+                <h3>Delete Account</h3>
+                <p>Permanently delete your account and all associated data</p>
+              </div>
+              <button 
+                className="delete-account-button"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
+
+      {showDeleteConfirm && (
+        <div className="delete-confirm-modal">
+          <div className="delete-confirm-content">
+            <h2>Delete Account</h2>
+            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+            <div className="delete-confirm-buttons">
+              <button 
+                className="cancel-delete-button"
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+              <button 
+                className="confirm-delete-button"
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Deleting...' : 'Yes, Delete My Account'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
