@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Market.css";
 
-const products = [
+export const products = [
+  // Bear Area Products
   { 
     id: 1,
     name: "Fresh Strawberries", 
@@ -14,8 +16,59 @@ const products = [
     rating: 4.8,
     reviews: 124,
     farmer: "Green Valley Farms",
-    location: "Local"
+    location: "Local",
+    distance: 2.5,
+    coordinates: { lat: 39.6293, lng: -75.6583 }, // Bear, DE
+    variants: ["Regular"],
+    farm: {
+      name: "Bear Valley Farm",
+      image: "https://images.unsplash.com/photo-1500076656116-558758c991c1?w=50&h=50&fit=crop"
+    }
   },
+  { 
+    id: 16,
+    name: "Fresh Raspberries", 
+    price: "$5.99", 
+    image: "https://scenichillfarmnursery.com/cdn/shop/products/Autumn_Britten_watermarked.jpg?v=1554579036",
+    category: "Fruits & Veggies",
+    description: "Sweet and tart organic raspberries, perfect for desserts or snacking.",
+    unit: "pound",
+    inStock: true,
+    rating: 4.7,
+    reviews: 89,
+    farmer: "Bear Valley Farm",
+    location: "Local",
+    distance: 2.5,
+    coordinates: { lat: 39.6293, lng: -75.6583 }, // Bear, DE
+    variants: ["Regular"],
+    farm: {
+      name: "Bear Valley Farm",
+      image: "https://images.unsplash.com/photo-1500076656116-558758c991c1?w=50&h=50&fit=crop"
+    }
+  },
+  { 
+    id: 17,
+    name: "Fresh Blackberries", 
+    price: "$5.75", 
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxBqrUvh0OR0ZTKQFH6BlZox5xC75fimYudA&s",
+    category: "Fruits & Veggies",
+    description: "Juicy organic blackberries, bursting with flavor.",
+    unit: "pound",
+    inStock: true,
+    rating: 4.6,
+    reviews: 76,
+    farmer: "Bear Valley Farm",
+    location: "Local",
+    distance: 2.5,
+    coordinates: { lat: 39.6293, lng: -75.6583 }, // Bear, DE
+    variants: ["Regular"],
+    farm: {
+      name: "Bear Valley Farm",
+      image: "https://images.unsplash.com/photo-1500076656116-558758c991c1?w=50&h=50&fit=crop"
+    }
+  },
+
+  // Blueberry Hill Farm Products
   { 
     id: 2,
     name: "Blueberries", 
@@ -28,104 +81,218 @@ const products = [
     rating: 4.6,
     reviews: 89,
     farmer: "Berry Patch Farms",
-    location: "Local"
+    location: "Local",
+    distance: 1.8,
+    coordinates: { lat: 39.6393, lng: -75.6683 }, // Near Bear, DE
+    variants: ["Regular"],
+    farm: {
+      name: "Blueberry Hill Farm",
+      image: "https://images.squarespace-cdn.com/content/v1/59233439b3db2b1a2bff6b52/1595284184451-6FMHRISLTYCOUBJVW1NU/blueberry+farms+glens+falls+ny"
+    }
   },
   { 
+    id: 18,
+    name: "Blueberry Jam", 
+    price: "$6.99", 
+    image: "https://www.twinoakmarket.com/cdn/shop/products/BlueberryJam.jpg?v=1615856777",
+    category: "Pantry",
+    description: "Homemade blueberry jam, made with fresh berries and natural sweeteners.",
+    unit: "8oz jar",
+    inStock: true,
+    rating: 4.8,
+    reviews: 112,
+    farmer: "Berry Patch Farms",
+    location: "Local",
+    distance: 1.8,
+    coordinates: { lat: 39.6393, lng: -75.6683 }, // Near Bear, DE
+    variants: ["Regular", "Low Sugar"],
+    farm: {
+      name: "Blueberry Hill Farm",
+      image: "https://images.squarespace-cdn.com/content/v1/59233439b3db2b1a2bff6b52/1595284184451-6FMHRISLTYCOUBJVW1NU/blueberry+farms+glens+falls+ny"
+    }
+  },
+
+  // Newark Area Products
+  {
     id: 3,
-    name: "Cucumbers", 
-    price: "$2.50", 
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK-Oi68V13zZMEEJWgi1IZOIYIcKLlpR3acg&s",
-    category: "Fruits & Veggies",
-    description: "Crisp, organic cucumbers, perfect for salads or refreshing snacks. Grown without pesticides.",
-    unit: "each",
+    name: "Fresh Eggs",
+    price: "$6.99",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkq-L39OlKMpP5_8jjf3ytTEq0cIjQePskQg&s",
+    category: "Dairy",
+    description: "Farm-fresh organic eggs from free-range chickens.",
+    unit: "dozen",
+    inStock: true,
+    rating: 4.9,
+    reviews: 156,
+    farmer: "Newark Poultry Farm",
+    location: "Local",
+    distance: 5.2,
+    coordinates: { lat: 39.6837, lng: -75.7497 }, // Newark, DE
+    variants: ["Regular", "Large", "Extra Large"],
+    farm: {
+      name: "Newark Poultry Farm",
+      image: "https://corporate.perduefarms.com/media/2375/outdoor-chicken.jpg"
+    }
+  },
+  {
+    id: 21,
+    name: "Chicken Sausage",
+    price: "$7.99",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT_NKIu60-K6-uahbG5668wyWOnjoktzbA4dg&s",
+    category: "Meat",
+    description: "Homemade chicken sausage, made with premium ingredients.",
+    unit: "pound",
+    inStock: true,
+    rating: 4.7,
+    reviews: 98,
+    farmer: "Newark Poultry Farm",
+    location: "Local",
+    distance: 5.2,
+    coordinates: { lat: 39.6837, lng: -75.7497 }, // Newark, DE
+    variants: ["Italian", "Apple Sage", "Spicy"],
+    farm: {
+      name: "Newark Poultry Farm",
+      image: "https://corporate.perduefarms.com/media/2375/outdoor-chicken.jpg"
+    }
+  },
+
+  // Wilmington Area Products
+  {
+    id: 5,
+    name: "Fresh Basil",
+    price: "$3.99",
+    image: "https://frutplanet.com/wp-content/uploads/2023/10/Basil.jpg",
+    category: "Herbs",
+    description: "Freshly harvested organic basil, perfect for cooking.",
+    unit: "bunch",
     inStock: true,
     rating: 4.5,
     reviews: 67,
-    farmer: "Fresh Fields Farm",
-    location: "Local"
+    farmer: "Wilmington Urban Farm",
+    location: "Local",
+    distance: 8.5,
+    coordinates: { lat: 39.7396, lng: -75.5398 }, // Wilmington, DE
+    variants: ["Regular"],
+    farm: {
+      name: "Wilmington Urban Farm",
+      image: "https://static.country-guide.ca/wp-content/uploads/2022/10/04115141/farm_red_barns-iStock.jpeg"
+    }
   },
-  { 
-    id: 4,
-    name: "Whole Milk", 
-    price: "$4.99", 
-    image: "https://admin.marketwagon.com/uploads/161223538888729354-410B-4293-9C8C-C5472D1C8500.jpeg.webp",
-    category: "Dairy",
-    description: "Farm-fresh whole milk, rich and creamy. From grass-fed cows, pasteurized for safety.",
-    unit: "gallon",
-    inStock: true,
-    rating: 4.7,
-    reviews: 156,
-    farmer: "Dairy Delight Farms",
-    location: "Local"
-  },
-  { 
-    id: 5,
-    name: "Chocolate Whole Milk", 
-    price: "$5.99", 
-    image: "https://admin.marketwagon.com/uploads/1612234917AB094FC1-6604-4BDE-BC4E-53653D48B022.jpeg.webp",
-    category: "Dairy",
-    description: "Rich and creamy chocolate milk made with real cocoa. Perfect for a sweet treat.",
-    unit: "gallon",
-    inStock: true,
-    rating: 4.9,
-    reviews: 98,
-    farmer: "Dairy Delight Farms",
-    location: "Local"
-  },
-  { 
-    id: 6,
-    name: "Organic Carrots", 
-    price: "$4.25", 
-    image: "https://ediblealaska.ediblecommunities.com/wp-content/uploads/2024/08/carrot-cult_01-789x1024.jpg",
-    category: "Fruits & Veggies",
-    description: "Fresh organic carrots, sweet and crunchy. Packed with vitamins and perfect for snacking.",
+  {
+    id: 24,
+    name: "Fresh Mint",
+    price: "$3.99",
+    image: "https://cdnimg.webstaurantstore.com/images/products/large/440660/2263438.jpg",
+    category: "Herbs",
+    description: "Fresh organic mint, great for beverages and cooking.",
     unit: "bunch",
     inStock: true,
     rating: 4.6,
-    reviews: 112,
-    farmer: "Root Cellar Farms",
-    location: "Local"
+    reviews: 89,
+    farmer: "Wilmington Urban Farm",
+    location: "Local",
+    distance: 8.5,
+    coordinates: { lat: 39.7396, lng: -75.5398 }, // Wilmington, DE
+    variants: ["Regular"],
+    farm: {
+      name: "Wilmington Urban Farm",
+      image: "https://static.country-guide.ca/wp-content/uploads/2022/10/04115141/farm_red_barns-iStock.jpeg"
+    }
+  },
+
+  // Wilmington Bread Co. Products
+  {
+    id: 6,
+    name: "Artisan Sourdough Bread",
+    price: "$7.50",
+    image: "https://images.unsplash.com/photo-1586444248902-2f64eddc13df?w=400&h=300",
+    category: "Bakery",
+    description: "Freshly baked artisan sourdough bread, made with organic flour.",
+    unit: "loaf",
+    inStock: true,
+    rating: 4.9,
+    reviews: 134,
+    farmer: "Wilmington Bread Co.",
+    location: "Local",
+    distance: 8.5,
+    coordinates: { lat: 39.7396, lng: -75.5398 }, // Wilmington, DE
+    variants: ["Regular", "Whole Wheat"],
+    farm: {
+      name: "Wilmington Bread Co.",
+      image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=50&h=50&fit=crop"
+    }
   }
 ];
 
-function Market() {
-  const [cart, setCart] = useState([]);
+function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
+  const navigate = useNavigate();
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [locationError, setLocationError] = useState(null);
+  const [isLocationLoading, setIsLocationLoading] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [reviews, setReviews] = useState({});
+  const [newReview, setNewReview] = useState({
+    rating: 0,
+    comment: '',
+    productId: null
+  });
   const [filters, setFilters] = useState({
     categories: [],
     labels: [],
     priceRange: {
       min: 0,
       max: 50
-    }
+    },
+    distance: 30
   });
   const [showCart, setShowCart] = useState(false);
 
-  const addToCart = (product) => {
-    const existingItem = cart.find(item => item.id === product.id);
-    if (existingItem) {
-      setCart(cart.map(item =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      ));
+  const distanceOptions = [5, 10, 15, 20, 25, 30];
+
+  const requestLocation = () => {
+    setIsLocationLoading(true);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          setLocationError(null);
+          setIsLocationLoading(false);
+        },
+        (error) => {
+          setLocationError("Unable to access location. Please enable location services in your browser settings.");
+          setIsLocationLoading(false);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0
+        }
+      );
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setLocationError("Geolocation is not supported by this browser.");
+      setIsLocationLoading(false);
     }
     setShowCart(true);
   };
 
-  const removeFromCart = (productId) => {
-    setCart(cart.filter(item => item.id !== productId));
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 3959;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
   };
 
-  const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity === 0) {
-      removeFromCart(productId);
-    } else {
-      setCart(cart.map(item => 
-        item.id === productId ? { ...item, quantity: newQuantity } : item
-      ));
-    }
+  const formatDistance = (distance) => {
+    return `${distance.toFixed(1)} miles from you`;
   };
 
   const toggleFilter = (type, value) => {
@@ -147,22 +314,58 @@ function Market() {
     }));
   };
 
-  const calculateTotal = () => {
-    return cart.reduce((total, item) => {
-      const price = parseFloat(item.price.replace('$', ''));
-      return total + (price * item.quantity);
-    }, 0).toFixed(2);
+  const handleDistanceChange = (value) => {
+    setFilters(prev => ({
+      ...prev,
+      distance: Number(value)
+    }));
+  };
+
+  const openProductDetails = (product) => {
+    setSelectedProduct(product);
+  };
+
+  const closeProductDetails = () => {
+    setSelectedProduct(null);
+  };
+
+  const handleFarmClick = (e, farmName) => {
+    e.stopPropagation();
+    navigate(`/farm/${encodeURIComponent(farmName)}`);
   };
 
   const filteredProducts = products.filter(product => {
     if (filters.categories.length && !filters.categories.includes(product.category)) {
       return false;
     }
+
     const productPrice = parseFloat(product.price.replace('$', ''));
     if (productPrice < filters.priceRange.min || productPrice > filters.priceRange.max) {
       return false;
     }
-    return true;
+
+    if (filters.labels.length > 0) {
+      if (filters.labels.includes("Organic") && !product.description.toLowerCase().includes("organic")) {
+        return false;
+      }
+      if (filters.labels.includes("Local") && product.distance > 10) {
+        return false;
+      }
+    }
+
+    let productDistance;
+    if (userLocation && product.coordinates) {
+      productDistance = calculateDistance(
+        userLocation.lat,
+        userLocation.lng,
+        product.coordinates.lat,
+        product.coordinates.lng
+      );
+    } else {
+      productDistance = product.distance;
+    }
+
+    return productDistance <= filters.distance;
   });
 
   const renderStars = (rating) => {
@@ -189,45 +392,52 @@ function Market() {
         <h1>Farm2Table</h1>
         <div className="nav-buttons">
           <div className="cart-container">
-            <button 
-              className="cart-button"
-              onClick={() => setShowCart(!showCart)}
-            >
+            <button className="cart-button" onClick={() => setIsCartOpen(!isCartOpen)}>
               <span className="cart-text">Cart ({cart.length})</span>
-              {cart.length > 0 && (
-                <div className={`cart-dropdown ${showCart ? 'show' : ''}`}>
-                  {cart.map((item) => (
+              {cart.length > 0 && isCartOpen && (
+                <div className="cart-dropdown">
+                  {cart.map(item => (
                     <div key={item.id} className="cart-item">
                       <div className="cart-item-info">
                         <div className="item-name">{item.name}</div>
                         <div className="item-price">{item.price}</div>
                       </div>
                       <div className="quantity-controls">
-                        <button 
+                        <div 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(item.id, Math.max(0, item.quantity - 1));
+                          }} 
                           className="quantity-btn"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         >
                           -
-                        </button>
+                        </div>
                         <span className="quantity">{item.quantity}</span>
-                        <button 
+                        <div 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(item.id, item.quantity + 1);
+                          }} 
                           className="quantity-btn"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         >
                           +
-                        </button>
-                        <button 
+                        </div>
+                        <div 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFromCart(item.id);
+                          }} 
                           className="remove-btn"
-                          onClick={() => removeFromCart(item.id)}
                         >
-                          ×
-                        </button>
+                          Remove
+                        </div>
                       </div>
                     </div>
                   ))}
                   <div className="cart-total">
                     Total: ${calculateTotal()}
                   </div>
+                  <Link to="/cart" className="check-cart-btn">Check Cart</Link>
                 </div>
               )}
             </button>
@@ -240,55 +450,63 @@ function Market() {
           <h2>Filters</h2>
           <div className="filter-box">
             <div className="filter-section">
+              <h3>Distance</h3>
+              {!userLocation && !locationError && (
+                <button onClick={requestLocation} className="location-request-btn" disabled={isLocationLoading}>
+                  {isLocationLoading ? "Getting Location..." : "Share My Location"}
+                </button>
+              )}
+              {locationError && (
+                <div className="location-error">
+                  <p>{locationError}</p>
+                  <button onClick={requestLocation} className="location-request-btn" disabled={isLocationLoading}>
+                    Try Again
+                  </button>
+                </div>
+              )}
+              {userLocation && (
+                <select value={filters.distance} onChange={(e) => handleDistanceChange(e.target.value)} className="distance-select">
+                  {distanceOptions.map(distance => (
+                    <option key={distance} value={distance}>Within {distance} miles</option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            <div className="filter-section">
               <h3>Categories</h3>
-              <div className="filter-list">
-                <div className="filter-item">
-                  <label className="filter-label">
-                    <span className="filter-text">Fruits & Veggies</span>
-                    <input 
-                      type="checkbox" 
-                      checked={filters.categories.includes("Fruits & Veggies")}
-                      onChange={() => toggleFilter("categories", "Fruits & Veggies")}
-                    />
-                  </label>
-                </div>
-                <div className="filter-item">
-                  <label className="filter-label">
-                    <span className="filter-text">Dairy</span>
-                    <input 
-                      type="checkbox" 
-                      checked={filters.categories.includes("Dairy")}
-                      onChange={() => toggleFilter("categories", "Dairy")}
-                    />
-                  </label>
-                </div>
-              </div>
+              <ul>
+                {["Fruits & Veggies", "Dairy", "Bakery", "Meat", "Pantry", "Herbs", "Home"].map(category => (
+                  <li key={category}>
+                    <label className="filter-label">
+                      <input 
+                        type="checkbox" 
+                        checked={filters.categories.includes(category)}
+                        onChange={() => toggleFilter("categories", category)}
+                      />
+                      {category}
+                    </label>
+                  </li>
+                ))}
+              </ul>
             </div>
             
             <div className="filter-section">
               <h3>Labels</h3>
-              <div className="filter-list">
-                <div className="filter-item">
-                  <label className="filter-label">
-                    <span className="filter-text">Organic</span>
-                    <input 
-                      type="checkbox" 
-                      checked={filters.labels.includes("Organic")}
-                      onChange={() => toggleFilter("labels", "Organic")}
-                    />
-                  </label>
-                </div>
-                <div className="filter-item">
-                  <label className="filter-label">
-                    <span className="filter-text">Local</span>
-                    <input 
-                      type="checkbox" 
-                      checked={filters.labels.includes("Local")}
-                      onChange={() => toggleFilter("labels", "Local")}
-                    />
-                  </label>
-                </div>
-              </div>
+              <ul>
+                {["Organic", "Local"].map(label => (
+                  <li key={label}>
+                    <label className="filter-label">
+                      <input 
+                        type="checkbox" 
+                        checked={filters.labels.includes(label)}
+                        onChange={() => toggleFilter("labels", label)}
+                      />
+                      {label}
+                    </label>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="filter-section">
@@ -318,22 +536,47 @@ function Market() {
                     />
                   </div>
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="50"
-                  value={filters.priceRange.max}
-                  onChange={(e) => handlePriceChange('max', e.target.value)}
-                  className="price-slider"
-                />
               </div>
             </div>
           </div>
         </aside>
 
         <main className="products-grid">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="product-card">
+          {!userLocation && !locationError && (
+            <div className="location-prompt">
+              <h2>Find Products Near You</h2>
+              <p>Share your location to see products available in your area.</p>
+              <button 
+                onClick={requestLocation}
+                className="location-request-btn large"
+                disabled={isLocationLoading}
+              >
+                {isLocationLoading ? "Getting Location..." : "Share My Location"}
+              </button>
+            </div>
+          )}
+          {locationError && (
+            <div className="location-error-message">
+              <h2>Location Access Required</h2>
+              <p>{locationError}</p>
+              <button 
+                onClick={requestLocation}
+                className="location-request-btn large"
+                disabled={isLocationLoading}
+              >
+                Try Again
+              </button>
+            </div>
+          )}
+          {userLocation && filteredProducts.length === 0 && (
+            <div className="no-products-message">
+              <h2>No Products Found</h2>
+              <p>No products found within {filters.distance} miles of your location.</p>
+              <p>Try increasing the distance range or check back later for new products.</p>
+            </div>
+          )}
+          {userLocation && filteredProducts.map((product) => (
+            <div key={product.id} className="product-card" onClick={() => openProductDetails(product)}>
               <img src={product.image} alt={product.name} className="product-image" />
               <div className="product-info">
                 <h2 className="product-name">{product.name}</h2>
@@ -342,21 +585,114 @@ function Market() {
                   <span className="review-count">({product.reviews} reviews)</span>
                 </div>
                 <p className="product-price">{product.price}</p>
-                <p className="product-description">{product.description}</p>
-                <div className="product-meta">
-                  <span className="farmer">By {product.farmer}</span>
-                  <span className="location">{product.location}</span>
+                <div className="farm-info">
+                  <img src={product.farm.image} alt={product.farm.name} className="farm-image" />
+                  <span className="farm-name clickable" onClick={(e) => handleFarmClick(e, product.farm.name)}>
+                    {product.farm.name}
+                  </span>
                 </div>
-                <button 
-                  onClick={() => addToCart(product)}
-                  className="add-to-cart-btn"
-                >
+                <p className="distance-info">
+                  <span className="distance-icon">📍</span>
+                  {userLocation 
+                    ? formatDistance(calculateDistance(
+                        userLocation.lat,
+                        userLocation.lng,
+                        product.coordinates.lat,
+                        product.coordinates.lng
+                      ))
+                    : formatDistance(product.distance)
+                  }
+                </p>
+                <button onClick={(e) => {
+                  e.stopPropagation();
+                  addToCart(product);
+                }} className="add-to-cart-btn">
                   Add to Cart
                 </button>
               </div>
             </div>
           ))}
         </main>
+
+        {selectedProduct && (
+          <div className="product-modal-overlay" onClick={closeProductDetails}>
+            <div className="product-modal" onClick={e => e.stopPropagation()}>
+              <button className="close-modal" onClick={closeProductDetails}>&times;</button>
+              <div className="product-modal-content">
+                <div className="product-modal-image">
+                  <img src={selectedProduct.image} alt={selectedProduct.name} />
+                </div>
+                <div className="product-modal-info">
+                  <h2>{selectedProduct.name}</h2>
+                  <p className="product-category">{selectedProduct.category}</p>
+                  <div className="farm-info modal-farm-info">
+                    <img src={selectedProduct.farm.image} alt={selectedProduct.farm.name} className="farm-image" />
+                    <span className="farm-name clickable" onClick={(e) => handleFarmClick(e, selectedProduct.farm.name)}>
+                      {selectedProduct.farm.name}
+                    </span>
+                  </div>
+                  <p className="distance-info modal-distance">
+                    <span className="distance-icon">📍</span>
+                    {userLocation 
+                      ? formatDistance(calculateDistance(
+                          userLocation.lat,
+                          userLocation.lng,
+                          selectedProduct.coordinates.lat,
+                          selectedProduct.coordinates.lng
+                        ))
+                      : formatDistance(selectedProduct.distance)
+                    }
+                  </p>
+                  <div className="product-options">
+                    <div className="flavor-select">
+                      <label>Pick a flavor</label>
+                      <select>
+                        {selectedProduct.variants.map((variant, index) => (
+                          <option key={index} value={variant}>{variant}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="size-select">
+                      <label>Pick a size</label>
+                      <select>
+                        {selectedProduct.category === "Fruits & Veggies" ? (
+                          <>
+                            <option value="1">1 pound</option>
+                            <option value="2">2 pounds</option>
+                            <option value="5">5 pounds</option>
+                          </>
+                        ) : selectedProduct.category === "Dairy" ? (
+                          <>
+                            <option value="8oz">8 oz</option>
+                            <option value="16oz">16 oz</option>
+                            <option value="32oz">32 oz</option>
+                          </>
+                        ) : selectedProduct.category === "Bakery" ? (
+                          <>
+                            <option value="regular">Regular</option>
+                            <option value="large">Large</option>
+                          </>
+                        ) : (
+                          <option value="regular">Regular</option>
+                        )}
+                      </select>
+                    </div>
+                  </div>
+                  <button className="add-to-cart-btn modal-add-btn" onClick={() => {
+                    addToCart(selectedProduct);
+                    closeProductDetails();
+                  }}>
+                    Add to Cart
+                  </button>
+                  <div className="product-description">
+                    <h3>Description</h3>
+                    <p>{selectedProduct.description}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       <footer className="market-footer">
         &copy; 2025 Farm2Table. All rights reserved.

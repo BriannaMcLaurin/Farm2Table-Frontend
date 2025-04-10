@@ -15,6 +15,9 @@ import Settings from './pages/Settings';
 import Home from './pages/Home';
 import ConsumerSubscription from './pages/consumer.subscription';
 import FarmerSubscription from './pages/farmer-subscriptions';
+import Cart from './Cart';
+import Checkout from './Checkout';
+import FarmPage from './FarmPage';
 import './App.css';
 import './styles/theme.css';
 
@@ -33,6 +36,42 @@ function RouteDebugger() {
 
 function AppRoutes() {
   const { currentUser, userRole } = useAuth();
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem('cart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+
+  const addToCart = (product) => {
+    const existingItem = cart.find(item => item.id === product.id);
+    if (existingItem) {
+      setCart(cart.map(item =>
+        item.id === product.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+    } else {
+      setCart([...cart, { ...product, quantity: 1 }]);
+    }
+  };
+
+  const removeFromCart = (productId) => {
+    setCart(cart.filter(item => item.id !== productId));
+  };
+
+  const updateQuantity = (productId, newQuantity) => {
+    if (newQuantity === 0) {
+      removeFromCart(productId);
+    } else {
+      setCart(cart.map(item => 
+        item.id === productId ? { ...item, quantity: newQuantity } : item
+      ));
+    }
+  };
   
   // Force the routing based on user role
   const isFarmer = userRole === 'farmer';
@@ -50,7 +89,10 @@ function AppRoutes() {
         
         {/* Protected routes */}
         <Route path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" replace />} />
-        <Route path="/market" element={currentUser ? <Market /> : <Navigate to="/login" replace />} />
+        <Route path="/market" element={currentUser ? <Market cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} /> : <Navigate to="/login" replace />} />
+        <Route path="/cart" element={currentUser ? <Cart cart={cart} updateQuantity={updateQuantity} removeFromCart={removeFromCart} /> : <Navigate to="/login" replace />} />
+        <Route path="/checkout" element={currentUser ? <Checkout cart={cart} /> : <Navigate to="/login" replace />} />
+        <Route path="/farm/:farmName" element={currentUser ? <FarmPage addToCart={addToCart} /> : <Navigate to="/login" replace />} />
         <Route path="/market-insights" element={currentUser ? <MarketInsights /> : <Navigate to="/login" replace />} />
         <Route path="/pricing" element={currentUser ? <Pricing /> : <Navigate to="/login" replace />} />
         <Route path="/order-table" element={currentUser ? <OrderTable /> : <Navigate to="/login" replace />} />
