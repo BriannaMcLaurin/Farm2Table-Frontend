@@ -1,16 +1,16 @@
 .farm-page-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: var(--spacing-xl);
 }
 
 .back-link {
   display: inline-flex;
   align-items: center;
-  color: #4f46e5;
+  color: var(--secondary-color);
   text-decoration: none;
   font-size: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl);
 }
 
 .back-link:hover {
@@ -20,10 +20,10 @@
 .farm-header {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid #e5e7eb;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .farm-profile-image {
@@ -35,27 +35,27 @@
 
 .farm-header h1 {
   font-size: 2.5rem;
-  color: #111827;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .farm-products h2 {
   font-size: 1.5rem;
-  color: #374151;
-  margin-bottom: 2rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xl);
 }
 
 .farm-products-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  gap: var(--spacing-xl);
 }
 
 @media (max-width: 640px) {
   .farm-header {
     flex-direction: column;
     text-align: center;
-    gap: 1rem;
+    gap: var(--spacing-md);
   }
 
   .farm-header h1 {

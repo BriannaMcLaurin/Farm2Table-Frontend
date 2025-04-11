@@ -5,7 +5,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
-import Market from './Market';
+import Market, { products } from './Market';
 import Dashboard from './pages/Dashboard';
 import MarketInsights from './pages/MarketInsights';
 import Pricing from './pages/Pricing';
@@ -18,6 +18,7 @@ import FarmerSubscription from './pages/farmer-subscriptions';
 import Cart from './Cart';
 import Checkout from './Checkout';
 import FarmPage from './FarmPage';
+import FarmManagement from './pages/FarmManagement';
 import './App.css';
 import './styles/theme.css';
 
@@ -37,16 +38,32 @@ function RouteDebugger() {
 function AppRoutes() {
   const { currentUser, userRole } = useAuth();
   const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem('cart');
-    return savedCart ? JSON.parse(savedCart) : [];
+    try {
+      const savedCart = localStorage.getItem('cart');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error);
+      return [];
+    }
   });
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
+    try {
+      localStorage.setItem('cart', JSON.stringify(cart));
+      console.log("Cart saved to localStorage:", cart);
+    } catch (error) {
+      console.error("Error saving cart to localStorage:", error);
+    }
   }, [cart]);
 
   const addToCart = (product) => {
+    console.log("Adding to cart:", product);
+    if (!product || !product.id) {
+      console.error("Invalid product:", product);
+      return;
+    }
+    
     const existingItem = cart.find(item => item.id === product.id);
     if (existingItem) {
       setCart(cart.map(item =>
@@ -60,10 +77,12 @@ function AppRoutes() {
   };
 
   const removeFromCart = (productId) => {
+    console.log("Removing from cart:", productId);
     setCart(cart.filter(item => item.id !== productId));
   };
 
   const updateQuantity = (productId, newQuantity) => {
+    console.log("Updating quantity:", productId, newQuantity);
     if (newQuantity === 0) {
       removeFromCart(productId);
     } else {
@@ -73,26 +92,34 @@ function AppRoutes() {
     }
   };
   
+  const clearCart = () => {
+    console.log("Clearing cart");
+    setCart([]);
+  };
+  
   // Force the routing based on user role
   const isFarmer = userRole === 'farmer';
   console.log('App - Current user role:', userRole);
   console.log('App - Is farmer:', isFarmer);
+
+  // Determine the default redirect path based on user role
+  const defaultRedirectPath = isFarmer ? '/dashboard' : '/market';
 
   return (
     <>
       <RouteDebugger />
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={!currentUser ? <Home /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
-        <Route path="/login" element={!currentUser ? <Login /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
-        <Route path="/signup" element={!currentUser ? <SignUp /> : <Navigate to={isFarmer ? '/dashboard' : '/market'} replace />} />
+        <Route path="/" element={!currentUser ? <Home /> : <Navigate to={defaultRedirectPath} replace />} />
+        <Route path="/login" element={!currentUser ? <Login /> : <Navigate to={defaultRedirectPath} replace />} />
+        <Route path="/signup" element={!currentUser ? <SignUp /> : <Navigate to={defaultRedirectPath} replace />} />
         
         {/* Protected routes */}
         <Route path="/dashboard" element={currentUser ? <Dashboard /> : <Navigate to="/login" replace />} />
         <Route path="/market" element={currentUser ? <Market cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} updateQuantity={updateQuantity} /> : <Navigate to="/login" replace />} />
         <Route path="/cart" element={currentUser ? <Cart cart={cart} updateQuantity={updateQuantity} removeFromCart={removeFromCart} /> : <Navigate to="/login" replace />} />
-        <Route path="/checkout" element={currentUser ? <Checkout cart={cart} /> : <Navigate to="/login" replace />} />
-        <Route path="/farm/:farmName" element={currentUser ? <FarmPage addToCart={addToCart} /> : <Navigate to="/login" replace />} />
+        <Route path="/checkout" element={currentUser ? <Checkout cart={cart} clearCart={clearCart} /> : <Navigate to="/login" replace />} />
+        <Route path="/farm/:farmName" element={currentUser ? <FarmPage products={products} addToCart={addToCart} /> : <Navigate to="/login" replace />} />
         <Route path="/market-insights" element={currentUser ? <MarketInsights /> : <Navigate to="/login" replace />} />
         <Route path="/pricing" element={currentUser ? <Pricing /> : <Navigate to="/login" replace />} />
         <Route path="/order-table" element={currentUser ? <OrderTable /> : <Navigate to="/login" replace />} />
@@ -100,6 +127,7 @@ function AppRoutes() {
         <Route path="/settings" element={currentUser ? <Settings /> : <Navigate to="/login" replace />} />
         <Route path="/subscription" element={currentUser ? <ConsumerSubscription /> : <Navigate to="/login" replace />} />
         <Route path="/farmer-subscription" element={currentUser ? <FarmerSubscription /> : <Navigate to="/login" replace />} />
+        <Route path="/farm-management" element={currentUser && isFarmer ? <FarmManagement /> : <Navigate to="/login" replace />} />
       </Routes>
     </>
   );

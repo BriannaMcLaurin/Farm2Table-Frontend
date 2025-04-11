@@ -231,6 +231,7 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
   const [locationError, setLocationError] = useState(null);
   const [isLocationLoading, setIsLocationLoading] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const cartRef = React.useRef(null);
   const [reviews, setReviews] = useState({});
   const [newReview, setNewReview] = useState({
     rating: 0,
@@ -246,7 +247,6 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
     },
     distance: 30
   });
-  const [showCart, setShowCart] = useState(false);
 
   const distanceOptions = [5, 10, 15, 20, 25, 30];
 
@@ -276,7 +276,6 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
       setLocationError("Geolocation is not supported by this browser.");
       setIsLocationLoading(false);
     }
-    setShowCart(true);
   };
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -386,16 +385,54 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
     return stars;
   };
 
+  const calculateTotal = () => {
+    if (!cart || !Array.isArray(cart)) return 0;
+    return cart.reduce((total, item) => {
+      const price = parseFloat(item.price?.replace('$', '') || '0');
+      const quantity = parseInt(item.quantity || '0');
+      return total + (price * quantity);
+    }, 0).toFixed(2);
+  };
+
+  // Add click outside handler to close cart dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (cartRef.current && !cartRef.current.contains(event.target)) {
+        setIsCartOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Debug cart state
+  useEffect(() => {
+    console.log("Cart state in Market:", cart);
+  }, [cart]);
+
   return (
     <div className="market-container">
       <nav className="market-nav">
         <h1>Farm2Table</h1>
         <div className="nav-buttons">
-          <div className="cart-container">
-            <button className="cart-button" onClick={() => setIsCartOpen(!isCartOpen)}>
-              <span className="cart-text">Cart ({cart.length})</span>
-              {cart.length > 0 && isCartOpen && (
-                <div className="cart-dropdown">
+          <div className="cart-container" ref={cartRef}>
+            <button 
+              className="cart-button" 
+              onClick={() => {
+                console.log("Cart button clicked, current state:", isCartOpen);
+                setIsCartOpen(!isCartOpen);
+              }}
+            >
+              <span className="cart-text">Cart ({cart ? cart.length : 0})</span>
+            </button>
+            <div className={`cart-dropdown ${isCartOpen ? 'show' : ''}`}>
+              {!cart || cart.length === 0 ? (
+                <div className="empty-cart-message">Your cart is empty</div>
+              ) : (
+                <>
                   {cart.map(item => (
                     <div key={item.id} className="cart-item">
                       <div className="cart-item-info">
@@ -403,7 +440,7 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
                         <div className="item-price">{item.price}</div>
                       </div>
                       <div className="quantity-controls">
-                        <div 
+                        <button 
                           onClick={(e) => {
                             e.stopPropagation();
                             updateQuantity(item.id, Math.max(0, item.quantity - 1));
@@ -411,9 +448,9 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
                           className="quantity-btn"
                         >
                           -
-                        </div>
+                        </button>
                         <span className="quantity">{item.quantity}</span>
-                        <div 
+                        <button 
                           onClick={(e) => {
                             e.stopPropagation();
                             updateQuantity(item.id, item.quantity + 1);
@@ -421,8 +458,8 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
                           className="quantity-btn"
                         >
                           +
-                        </div>
-                        <div 
+                        </button>
+                        <button 
                           onClick={(e) => {
                             e.stopPropagation();
                             removeFromCart(item.id);
@@ -430,7 +467,7 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
                           className="remove-btn"
                         >
                           Remove
-                        </div>
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -438,9 +475,9 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
                     Total: ${calculateTotal()}
                   </div>
                   <Link to="/cart" className="check-cart-btn">Check Cart</Link>
-                </div>
+                </>
               )}
-            </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -465,7 +502,11 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
                 </div>
               )}
               {userLocation && (
-                <select value={filters.distance} onChange={(e) => handleDistanceChange(e.target.value)} className="distance-select">
+                <select 
+                  value={filters.distance} 
+                  onChange={(e) => handleDistanceChange(e.target.value)} 
+                  className="distance-select"
+                >
                   {distanceOptions.map(distance => (
                     <option key={distance} value={distance}>Within {distance} miles</option>
                   ))}
@@ -475,38 +516,38 @@ function Market({ cart, addToCart, removeFromCart, updateQuantity }) {
 
             <div className="filter-section">
               <h3>Categories</h3>
-              <ul>
+              <div className="filter-list">
                 {["Fruits & Veggies", "Dairy", "Bakery", "Meat", "Pantry", "Herbs", "Home"].map(category => (
-                  <li key={category}>
+                  <div key={category} className="filter-item">
                     <label className="filter-label">
                       <input 
                         type="checkbox" 
                         checked={filters.categories.includes(category)}
                         onChange={() => toggleFilter("categories", category)}
                       />
-                      {category}
+                      <span className="filter-text">{category}</span>
                     </label>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
             
             <div className="filter-section">
               <h3>Labels</h3>
-              <ul>
+              <div className="filter-list">
                 {["Organic", "Local"].map(label => (
-                  <li key={label}>
+                  <div key={label} className="filter-item">
                     <label className="filter-label">
                       <input 
                         type="checkbox" 
                         checked={filters.labels.includes(label)}
                         onChange={() => toggleFilter("labels", label)}
                       />
-                      {label}
+                      <span className="filter-text">{label}</span>
                     </label>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
 
             <div className="filter-section">

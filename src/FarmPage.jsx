@@ -2,16 +2,18 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './FarmPage.css';
 
+
 const FarmPage = ({ products, addToCart }) => {
   const { farmName } = useParams();
-  
+ 
   // Find the farm details from any product of this farm
   const farmDetails = products.find(p => p.farm.name === decodeURIComponent(farmName))?.farm;
-  
+ 
   // Filter products for this specific farm
-  const farmProducts = products.filter(product => 
+  const farmProducts = products.filter(product =>
     product.farm.name === decodeURIComponent(farmName)
   );
+
 
   if (!farmDetails) {
     return (
@@ -22,14 +24,16 @@ const FarmPage = ({ products, addToCart }) => {
     );
   }
 
+
   return (
     <div className="farm-page-container">
       <Link to="/" className="back-link">← Back to Market</Link>
-      
+     
       <div className="farm-header">
         <img src={farmDetails.image} alt={farmDetails.name} className="farm-profile-image" />
         <h1>{farmDetails.name}</h1>
       </div>
+
 
       <div className="farm-products">
         <h2>Products from {farmDetails.name}</h2>
@@ -41,7 +45,7 @@ const FarmPage = ({ products, addToCart }) => {
                 <h3 className="product-name">{product.name}</h3>
                 <p className="product-price">{product.price}</p>
                 <p className="product-description">{product.description}</p>
-                <button 
+                <button
                   className="add-to-cart-button"
                   onClick={() => addToCart(product)}
                 >
@@ -56,4 +60,5 @@ const FarmPage = ({ products, addToCart }) => {
   );
 }
 
-export default FarmPage; 
+
+export default FarmPage;

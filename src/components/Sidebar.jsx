@@ -15,6 +15,11 @@ const Sidebar = ({ isCollapsed }) => {
     { icon: '⚙️', label: 'Settings', path: '/settings' },
   ];
 
+  // Add Farm Management menu item for farmers
+  if (userRole === 'farmer') {
+    menuItems.splice(1, 0, { icon: '🏡', label: 'Farm Management', path: '/farm-management' });
+  }
+
   return (
     <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
       <nav className="sidebar-nav">

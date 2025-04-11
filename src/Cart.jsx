@@ -1,9 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import './Cart.css';
 
 function Cart({ cart, updateQuantity, removeFromCart }) {
-  const total = cart.reduce((sum, item) => sum + (parseFloat(item.price.replace('$', '')) * item.quantity), 0);
+  useEffect(() => {
+    console.log("Cart component received cart:", cart);
+  }, [cart]);
+
+  if (!cart || !Array.isArray(cart)) {
+    console.error("Invalid cart data:", cart);
+    return (
+      <div className="cart-container">
+        <div className="cart-header">
+          <h1>Your Cart</h1>
+          <Link to="/market" className="back-to-market">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Market
+          </Link>
+        </div>
+        <div className="empty-cart">
+          <p>Unable to load cart</p>
+          <Link to="/market" className="shop-now-btn">Return to Market</Link>
+        </div>
+      </div>
+    );
+  }
+
+  const total = cart.reduce((sum, item) => {
+    const price = parseFloat(item.price?.replace('$', '') || '0');
+    const quantity = parseInt(item.quantity || '0');
+    return sum + (price * quantity);
+  }, 0);
 
   return (
     <div className="cart-container">
@@ -81,5 +111,19 @@ function Cart({ cart, updateQuantity, removeFromCart }) {
     </div>
   );
 }
+
+Cart.propTypes = {
+  cart: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+      price: PropTypes.string.isRequired,
+      quantity: PropTypes.number.isRequired,
+      image: PropTypes.string.isRequired
+    })
+  ).isRequired,
+  updateQuantity: PropTypes.func.isRequired,
+  removeFromCart: PropTypes.func.isRequired
+};
 
 export default Cart; 

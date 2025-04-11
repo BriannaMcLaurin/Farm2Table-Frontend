@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import './Checkout.css';
 
-function Checkout({ cart }) {
+function Checkout({ cart, clearCart }) {
   const [step, setStep] = useState(1);
   const [deliveryOption, setDeliveryOption] = useState('pickup');
   const [deliveryInfo, setDeliveryInfo] = useState({
@@ -13,23 +14,33 @@ function Checkout({ cart }) {
     state: '',
     zip: '',
     instructions: '',
+    zipCode: '',
+    deliveryDate: ''
   });
   const [paymentInfo, setPaymentInfo] = useState({
     cardNumber: '',
     expiryDate: '',
     cvv: '',
+    nameOnCard: ''
   });
 
-  const calculateTotal = () => {
-    if (!cart || !Array.isArray(cart)) return 0;
-    return cart.reduce((total, item) => {
-      const price = parseFloat(item.price.replace('$', '')) || 0;
-      const quantity = parseInt(item.quantity) || 0;
-      return total + (price * quantity);
-    }, 0);
-  };
+  if (!cart || !Array.isArray(cart)) {
+    return (
+      <div className="checkout-container">
+        <div className="checkout-error">
+          <h2>Unable to Process Checkout</h2>
+          <p>There was an error loading your cart information.</p>
+          <button onClick={() => window.location.reload()}>Try Again</button>
+        </div>
+      </div>
+    );
+  }
 
-  const total = calculateTotal();
+  const total = cart.reduce((sum, item) => {
+    const price = parseFloat(item.price?.replace('$', '') || '0');
+    const quantity = parseInt(item.quantity || '0');
+    return sum + (price * quantity);
+  }, 0);
 
   const handleDeliveryOptionChange = (option) => {
     setDeliveryOption(option);
@@ -325,5 +336,18 @@ function Checkout({ cart }) {
     </div>
   );
 }
+
+Checkout.propTypes = {
+  cart: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+      price: PropTypes.string.isRequired,
+      quantity: PropTypes.number.isRequired,
+      image: PropTypes.string.isRequired
+    })
+  ).isRequired,
+  clearCart: PropTypes.func.isRequired
+};
 
 export default Checkout; 
